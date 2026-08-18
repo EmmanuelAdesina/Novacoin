@@ -62,7 +62,7 @@ src/hooks/
 src/lib/store.ts
 src/lib/demo-data.ts
 src/lib/db.ts
-src/app/api/
+# src/app/api/  # needed for feedback endpoint
 components.json
 
 # workspace internals

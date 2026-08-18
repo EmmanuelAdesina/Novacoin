@@ -400,17 +400,36 @@ export default function Page() {
   const [name, setName] = useState('');
   const [contact, setContact] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = () => {
-    if (feedbackText.trim() || contact.trim()) {
-      setSubmitted(true);
-    }
+  const handleSubmit = async () => {
+    if (submitting) return;
+    if (!feedbackText.trim() && !selectedResponse) return;
+    setSubmitting(true);
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'feedback', reaction: selectedResponse, feedback: feedbackText, name, contact }),
+      });
+    } catch { /* still show thanks even if network fails */ }
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
-  const handleInterest = () => {
-    if (name.trim() && contact.trim()) {
-      setSubmitted(true);
-    }
+  const handleInterest = async () => {
+    if (submitting) return;
+    if (!name.trim() || !contact.trim()) return;
+    setSubmitting(true);
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'interest', reaction: selectedResponse, feedback: feedbackText, name, contact }),
+      });
+    } catch { /* still show thanks even if network fails */ }
+    setSubmitting(false);
+    setSubmitted(true);
   };
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -722,10 +741,10 @@ export default function Page() {
                     </div>
                     <button
                       onClick={handleSubmit}
-                      disabled={!feedbackText.trim() && !selectedResponse}
+                      disabled={!feedbackText.trim() && !selectedResponse || submitting}
                       className="mt-3 w-full bg-[#2D1F14] text-[#FFF9F5] font-semibold text-sm py-3 rounded-xl hover:bg-[#3D2F24] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                     >
-                      Send feedback
+                      {submitting ? 'Sending...' : 'Send feedback'}
                     </button>
                   </div>
                 </FadeIn>
@@ -753,10 +772,10 @@ export default function Page() {
                       />
                       <button
                         onClick={handleInterest}
-                        disabled={!name.trim() || !contact.trim()}
+                        disabled={!name.trim() || !contact.trim() || submitting}
                         className="w-full bg-[#C9503E] text-white font-semibold text-sm py-3 rounded-xl hover:bg-[#B5432E] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
                       >
-                        I&apos;m interested
+                        {submitting ? 'Sending...' : 'I\'m interested'}
                       </button>
                     </div>
                   </div>
