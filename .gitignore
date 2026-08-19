@@ -1,2 +1,6 @@
 skills/
 node_modules/
+.next/
+tool-results/
+upload/
+
