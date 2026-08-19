@@ -1,0 +1,1148 @@
+     1→'use client';
+     2→
+     3→import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
+     4→import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+     5→
+     6→/* ═══════════════════════════════════════════════════════════
+     7→   CONSTANTS & HELPERS
+     8→   ═══════════════════════════════════════════════════════════ */
+     9→
+    10→const PAGE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://novacoin.zevcloud.app';
+    11→const COLORS = { terra: '#C9503E', sand: '#D4A574', sage: '#7C9082', lavender: '#9B8EC4', gold: '#C4A35A' };
+    12→const USERS = [
+    13→  { name: 'Amaka', color: '#9B8EC4', init: 'A' },
+    14→  { name: 'Daniel', color: '#7C9082', init: 'D' },
+    15→  { name: 'Tobi', color: '#C9503E', init: 'T' },
+    16→  { name: 'Zainab', color: '#C4A35A', init: 'Z' },
+    17→  { name: 'Chidi', color: '#D4A574', init: 'C' },
+    18→];
+    19→
+    20→const ease = [0.22, 1, 0.36, 1];
+    21→
+    22→function scrollTo(id: string) { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); }
+    23→
+    24→/* ═══════════════════════════════════════════════════════════
+    25→   ANIMATED NUMBER
+    26→   ═══════════════════════════════════════════════════════════ */
+    27→function AnimNum({ value, className = '' }: { value: number; className?: string }) {
+    28→  const ref = useRef<HTMLSpanElement>(null);
+    29→  const [display, setDisplay] = useState(0);
+    30→  const prev = useRef(0);
+    31→  useEffect(() => {
+    32→    const start = prev.current;
+    33→    const end = value;
+    34→    prev.current = end;
+    35→    if (start === end) return;
+    36→    const dur = 600;
+    37→    const t0 = performance.now();
+    38→    function tick(now: number) {
+    39→      const p = Math.min((now - t0) / dur, 1);
+    40→      const e = 1 - Math.pow(1 - p, 3);
+    41→      setDisplay(Math.round(start + (end - start) * e));
+    42→      if (p < 1) requestAnimationFrame(tick);
+    43→    }
+    44→    requestAnimationFrame(tick);
+    45→  }, [value]);
+    46→  return <span ref={ref} className={className}>{display.toLocaleString()}</span>;
+    47→}
+    48→
+    49→/* ═══════════════════════════════════════════════════════════
+    50→   SECTION REVEAL (scroll-triggered)
+    51→   ═══════════════════════════════════════════════════════════ */
+    52→function Reveal({ children, delay = 0, className = '', direction = 'up' }: {
+    53→  children: React.ReactNode; delay?: number; className?: string; direction?: 'up' | 'left' | 'right' | 'scale';
+    54→}) {
+    55→  const ref = useRef(null);
+    56→  const inView = useInView(ref, { once: true, margin: '-80px' });
+    57→  const initial = direction === 'left' ? { opacity: 0, x: -40 } : direction === 'right' ? { opacity: 0, x: 40 } : direction === 'scale' ? { opacity: 0, scale: 0.85 } : { opacity: 0, y: 30 };
+    58→  return (
+    59→    <motion.div ref={ref} initial={initial} animate={inView ? { opacity: 1, x: 0, y: 0, scale: 1 } : {}} transition={{ duration: 0.65, delay, ease }} className={className}>
+    60→      {children}
+    61→    </motion.div>
+    62→  );
+    63→}
+    64→
+    65→/* ═══════════════════════════════════════════════════════════
+    66→   NOVACOIN LOGO
+    67→   ═══════════════════════════════════════════════════════════ */
+    68→function NovacoinLogo({ size = 'md' }: { size?: 'md' | 'sm' }) {
+    69→  const s = size === 'md' ? 32 : 22;
+    70→  return (
+    71→    <motion.div className="flex items-center gap-2" whileHover={{ scale: 1.03 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+    72→      <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+    73→        <defs><linearGradient id="nc-g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse"><stop stopColor="#C9503E" /><stop offset="0.5" stopColor="#D4A574" /><stop offset="1" stopColor="#C4A35A" /></linearGradient></defs>
+    74→        <rect width="32" height="32" rx="10" fill="url(#nc-g)" />
+    75→        <path d="M10 22V10L22 22V10" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    76→      </svg>
+    77→      <span className={`${size === 'md' ? 'text-sm font-bold' : 'text-xs font-bold'} tracking-tight text-[#2D1F14]`}>{'Nova'}<span className="font-medium text-[#2D1F14]/50">coin</span></span>
+    78→    </motion.div>
+    79→  );
+    80→}
+    81→
+    82→/* ═══════════════════════════════════════════════════════════
+    83→   SOFT BUTTON
+    84→   ═══════════════════════════════════════════════════════════ */
+    85→function SoftButton({ children, onClick, variant = 'primary', className = '' }: {
+    86→  children: React.ReactNode; onClick?: () => void; variant?: 'primary' | 'secondary'; className?: string;
+    87→}) {
+    88→  const [hovered, setHovered] = useState(false);
+    89→  const base = 'inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-300 cursor-pointer select-none';
+    90→  const styles = variant === 'primary'
+    91→    ? 'bg-[#2D1F14] text-[#FFF9F5] px-7 py-3.5 text-sm hover:bg-[#3D2F24] shadow-sm hover:shadow-md'
+    92→    : 'bg-transparent text-[#2D1F14] px-7 py-3.5 text-sm border border-[#2D1F14]/12 hover:border-[#2D1F14]/25 hover:bg-[#2D1F14]/[0.03]';
+    93→  return (
+    94→    <motion.button onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} whileTap={{ scale: 0.96 }} className={`${base} ${styles} ${className}`}>
+    95→      {children}
+    96→      <motion.span animate={{ x: hovered ? 3 : 0 }} transition={{ type: 'spring', stiffness: 500, damping: 25 }}>→</motion.span>
+    97→    </motion.button>
+    98→  );
+    99→}
+   100→
+   101→/* ═══════════════════════════════════════════════════════════
+   102→   SELECT CARD (for feedback)
+   103→   ═══════════════════════════════════════════════════════════ */
+   104→function SelectCard({ label, sub, emoji, selected, onClick, multi = false }: {
+   105→  label: string; sub?: string; emoji?: string; selected: boolean; onClick: () => void; multi?: boolean;
+   106→}) {
+   107→  return (
+   108→    <motion.button onClick={onClick} whileHover={{ scale: 1.015, y: -1 }} whileTap={{ scale: 0.985 }}
+   109→      className={`w-full text-left px-5 py-4 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+   110→        selected ? 'border-[#2D1F14] bg-[#2D1F14]/[0.03] shadow-md' : 'border-[#2D1F14]/[0.06] bg-white hover:border-[#2D1F14]/15 hover:shadow-sm'
+   111→      }`}>
+   112→      <div className="flex items-center gap-3">
+   113→        {emoji && <motion.span className="text-xl" animate={selected ? { scale: [1, 1.25, 1] } : {}} transition={{ duration: 0.3 }}>{emoji}</motion.span>}
+   114→        <div className="flex-1 min-w-0">
+   115→          <span className={`font-semibold text-sm block ${selected ? 'text-[#2D1F14]' : 'text-[#2D1F14]/70'}`}>{label}</span>
+   116→          {sub && <span className="text-xs text-[#8B7D6B] mt-0.5 block">{sub}</span>}
+   117→        </div>
+   118→        {selected && !multi && (
+   119→          <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-[#2D1F14] flex items-center justify-center shrink-0">
+   120→            <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+   121→          </motion.span>
+   122→        )}
+   123→        {multi && (
+   124→          <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all ${selected ? 'border-[#2D1F14] bg-[#2D1F14]' : 'border-[#2D1F14]/20 bg-white'}`}>
+   125→            {selected && <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></motion.svg>}
+   126→          </span>
+   127→        )}
+   128→      </div>
+   129→    </motion.button>
+   130→  );
+   131→}
+   132→
+   133→/* ═══════════════════════════════════════════════════════════
+   134→   HERO: LIVING NETWORK WITH TRAVELING TRANSACTION
+   135→   ═══════════════════════════════════════════════════════════ */
+   136→function LivingHeroNetwork() {
+   137→  const [txIndex, setTxIndex] = useState(0);
+   138→  const [txActive, setTxActive] = useState(false);
+   139→  const containerRef = useRef<HTMLDivElement>(null);
+   140→
+   141→  const positions = [
+   142→    { x: 50, y: 15 },
+   143→    { x: 15, y: 55 },
+   144→    { x: 85, y: 45 },
+   145→    { x: 30, y: 85 },
+   146→    { x: 70, y: 80 },
+   147→  ];
+   148→
+   149→  const transactions = [
+   150→    { from: 0, to: 1 },
+   151→    { from: 1, to: 3 },
+   152→    { from: 3, to: 4 },
+   153→    { from: 4, to: 2 },
+   154→    { from: 2, to: 0 },
+   155→  ];
+   156→
+   157→  useEffect(() => {
+   158→    const interval = setInterval(() => {
+   159→      setTxActive(true);
+   160→      setTimeout(() => {
+   161→        setTxIndex((p) => (p + 1) % transactions.length);
+   162→        setTxActive(false);
+   163→      }, 1200);
+   164→    }, 3000);
+   165→    return () => clearInterval(interval);
+   166→  }, []);
+   167→
+   168→  const tx = transactions[txIndex];
+   169→  const fromPos = positions[tx.from];
+   170→  const toPos = positions[tx.to];
+   171→  const connections: [number, number][] = [[0,1],[0,2],[0,3],[1,3],[1,4],[2,4],[3,4],[2,3]];
+   172→  const svgLines = connections.map(([a, b]) => {
+   173→    const pa = positions[a]; const pb = positions[b];
+   174→    return `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}" stroke="#2D1F14" stroke-width="0.3" stroke-opacity="0.08"/>`;
+   175→  }).join('');
+   176→
+   177→  return (
+   178→    <div ref={containerRef} className="relative w-full max-w-sm mx-auto mt-8 md:mt-12 mb-2" style={{ aspectRatio: '4/3.5' }}>
+   179→      <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" dangerouslySetInnerHTML={{ __html: svgLines }} />
+   180→
+   181→      <AnimatePresence>
+   182→        {txActive && (
+   183→          <motion.div
+   184→            key={txIndex}
+   185→            initial={{ left: `${fromPos.x}%`, top: `${fromPos.y}%`, scale: 0.5, opacity: 0 }}
+   186→            animate={{ left: `${toPos.x}%`, top: `${toPos.y}%`, scale: [0.5, 1.3, 1, 0.6], opacity: [0, 1, 1, 0] }}
+   187→            exit={{ opacity: 0, scale: 0.3 }}
+   188→            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+   189→            className="absolute -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
+   190→          >
+   191→            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center"
+   192→              style={{ background: 'linear-gradient(135deg, #C9503E, #D4A574)', boxShadow: '0 4px 20px rgba(201,80,62,0.4)' }}>
+   193→              <svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M10 22V10L22 22V10" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+   194→            </div>
+   195→          </motion.div>
+   196→        )}
+   197→      </AnimatePresence>
+   198→
+   199→      {USERS.map((user, i) => {
+   200→        const pos = positions[i];
+   201→        const isSender = tx.from === i && txActive;
+   202→        const isReceiver = tx.to === i && txActive;
+   203→        return (
+   204→          <motion.div
+   205→            key={user.name}
+   206→            className="absolute z-10 flex flex-col items-center gap-1.5"
+   207→            style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+   208→            initial={{ opacity: 0, scale: 0 }}
+   209→            animate={{
+   210→              opacity: 1,
+   211→              scale: isSender ? 1.15 : isReceiver ? [1, 1.2, 1] : 1,
+   212→            }}
+   213→            transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.3 + i * 0.12 }}
+   214→          >
+   215→            <AnimatePresence>
+   216→              {isReceiver && (
+   217→                <motion.div
+   218→                  initial={{ scale: 0.5, opacity: 0.8 }}
+   219→                  animate={{ scale: 2, opacity: 0 }}
+   220→                  exit={{ opacity: 0 }}
+   221→                  transition={{ duration: 0.8 }}
+   222→                  className="absolute -top-1 w-10 h-10 rounded-full border-2"
+   223→                  style={{ borderColor: user.color }}
+   224→                />
+   225→              )}
+   226→            </AnimatePresence>
+   227→            <div className="w-9 h-9 md:w-11 md:h-11 rounded-full flex items-center justify-center text-white text-xs md:text-sm font-bold relative"
+   228→              style={{ background: `linear-gradient(135deg, ${user.color}, ${user.color}dd)`, boxShadow: isSender ? `0 0 20px ${user.color}60` : `0 2px 8px ${user.color}30` }}>
+   229→              {user.init}
+   230→              {isSender && (
+   231→                <motion.div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#C9503E] flex items-center justify-center"
+   232→                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 15 }}>
+   233→                  <svg width="8" height="6" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
+   234→                </motion.div>
+   235→              )}
+   236→            </div>
+   237→            <span className="text-[9px] md:text-[10px] font-semibold text-[#2D1F14]/60">@{user.name.toLowerCase()}</span>
+   238→          </motion.div>
+   239→        );
+   240→      })}
+   241→    </div>
+   242→  );
+   243→}
+   244→/* ═══════════════════════════════════════════════════════════
+   245→   INTERACTIVE "TRY IT" DEMO
+   246→   ═══════════════════════════════════════════════════════════ */
+   247→function TryItDemo() {
+   248→  const [phase, setPhase] = useState(0);
+   249→  // 0: enter amount, 1: got coin, 2: send to, 3: sent!, 4: idle
+   250→
+   251→  const [amount, setAmount] = useState('');
+   252→  const [sendingName, setSendingName] = useState('');
+   253→  const [coinVisible, setCoinVisible] = useState(false);
+   254→  const [sentDone, setSentDone] = useState(false);
+   255→
+   256→  const handleGetCoin = () => {
+   257→    if (!amount) return;
+   258→    setCoinVisible(true);
+   259→    setPhase(1);
+   260→  };
+   261→
+   262→  const handleSend = () => {
+   263→    if (!sendingName) return;
+   264→    setPhase(2);
+   265→    setTimeout(() => { setSentDone(true); setPhase(3); }, 1500);
+   266→  };
+   267→
+   268→  const handleReset = () => {
+   269→    setPhase(0); setAmount(''); setSendingName(''); setCoinVisible(false); setSentDone(false);
+   270→  };
+   271→
+   272→  return (
+   273→    <div className="max-w-sm mx-auto">
+   274→      <div className="bg-white rounded-3xl border border-[#2D1F14]/[0.06] shadow-[0_4px_30px_rgba(45,31,20,0.06)] overflow-hidden">
+   275→        {/* Header bar */}
+   276→        <div className="bg-[#FFF9F5] px-5 py-2.5 flex items-center justify-between border-b border-[#2D1F14]/[0.04]">
+   277→          <span className="text-[10px] font-semibold text-[#8B7D6B] tracking-wide uppercase">NovaCoin</span>
+   278→          <div className="flex items-center gap-1.5">
+   279→            <span className="w-1.5 h-1.5 rounded-full bg-[#7C9082]" style={{ animation: 'pulse-soft 2s infinite' }}></span>
+   280→            <span className="text-[9px] text-[#7C9082] font-medium">Live demo</span>
+   281→          </div>
+   282→        </div>
+   283→
+   284→        <div className="p-6 min-h-[220px] flex flex-col">
+   285→          <AnimatePresence mode="wait">
+   286→            {/* Phase 0: Enter amount */}
+   287→            {phase === 0 && (
+   288→              <motion.div key="p0" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} transition={{ duration: 0.35, ease }}>
+   289→                <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-[#C9503E] mb-4">Try it yourself</p>
+   290→                <p className="text-lg font-black text-[#2D1F14] mb-1">How much naira?</p>
+   291→                <p className="text-xs text-[#8B7D6B] mb-5">Enter any amount. This is just a demo.</p>
+   292→                <div className="relative">
+   293→                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-[#8B7D6B]">₦</span>
+   294→                  <input
+   295→                    type="text" inputMode="numeric" value={amount}
+   296→                    onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ''))}
+   297→                    placeholder="100" autoFocus
+   298→                    className="w-full bg-[#FFF9F5] rounded-2xl border-2 border-[#2D1F14]/[0.06] pl-9 pr-4 py-4 text-xl font-black text-[#2D1F14] placeholder:text-[#8B7D6B]/30 focus:outline-none focus:border-[#C9503E]/30 focus:ring-2 focus:ring-[#C9503E]/10 transition-all"
+   299→                  />
+   300→                </div>
+   301→                <motion.button
+   302→                  onClick={handleGetCoin} disabled={!amount}
+   303→                  whileTap={{ scale: 0.96 }}
+   304→                  className="mt-4 w-full bg-[#2D1F14] text-[#FFF9F5] font-bold text-sm py-4 rounded-2xl hover:bg-[#3D2F24] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+   305→                >
+   306→                  GET 1 NOVACOIN
+   307→                </motion.button>
+   308→              </motion.div>
+   309→            )}
+   310→
+   311→            {/* Phase 1: Got the coin! */}
+   312→            {phase === 1 && (
+   313→              <motion.div key="p1" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.4, ease }} className="text-center py-4">
+   314→                <motion.div
+   315→                  initial={{ scale: 0, rotate: -180 }}
+   316→                  animate={{ scale: 1, rotate: 0 }}
+   317→                  transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.1 }}
+   318→                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+   319→                  style={{ background: 'linear-gradient(135deg, #C9503E, #D4A574)', boxShadow: '0 8px 30px rgba(201,80,62,0.3)' }}
+   320→                >
+   321→                  <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M10 22V10L22 22V10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>
+   322→                </motion.div>
+   323→                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-sm font-medium text-[#8B7D6B] mb-1">₦{parseInt(amount || '0').toLocaleString()}</motion.p>
+   324→                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-2xl font-black text-[#2D1F14]">1 NovaCoin</motion.p>
+   325→                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-4">
+   326→                  <p className="text-xs text-[#8B7D6B] mb-3">Now send it to someone.</p>
+   327→                  <div className="relative">
+   328→                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-[#8B7D6B]">@</span>
+   329→                    <input
+   330→                      type="text" value={sendingName}
+   331→                      onChange={(e) => setSendingName(e.target.value)}
+   332→                      placeholder="Daniel" autoFocus
+   333→                      className="w-full bg-[#FFF9F5] rounded-xl border-2 border-[#2D1F14]/[0.06] pl-8 pr-4 py-3 text-sm font-semibold text-[#2D1F14] placeholder:text-[#8B7D6B]/40 focus:outline-none focus:border-[#9B8EC4]/30 focus:ring-2 focus:ring-[#9B8EC4]/10 transition-all"
+   334→                    />
+   335→                  </div>
+   336→                  <motion.button
+   337→                    onClick={handleSend} disabled={!sendingName}
+   338→                    whileTap={{ scale: 0.96 }}
+   339→                    className="mt-3 w-full bg-[#9B8EC4] text-white font-bold text-sm py-3.5 rounded-xl hover:bg-[#8A7DB5] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+   340→                  >
+   341→                    SEND 1 NOVACOIN
+   342→                  </motion.button>
+   343→                </motion.div>
+   344→              </motion.div>
+   345→            )}
+   346→
+   347→            {/* Phase 2: Sending animation */}
+   348→            {phase === 2 && (
+   349→              <motion.div key="p2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col items-center justify-center py-8">
+   350→                <div className="flex items-center gap-6">
+   351→                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C9503E] to-[#D4A574] flex items-center justify-center text-white text-xs font-bold">You</div>
+   352→                  <div className="relative w-20 h-1 bg-[#2D1F14]/[0.06] rounded-full overflow-hidden">
+   353→                    <motion.div className="absolute inset-y-0 left-0 rounded-full" style={{ background: 'linear-gradient(90deg, #C9503E, #D4A574)' }}
+   354→                      initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 1.2, ease }} />
+   355→                    <motion.div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full"
+   356→                      style={{ background: 'linear-gradient(135deg, #C9503E, #D4A574)', boxShadow: '0 2px 8px rgba(201,80,62,0.4)' }}
+   357→                      initial={{ left: '0%' }} animate={{ left: '100%' }} transition={{ duration: 1.2, ease }} />
+   358→                  </div>
+   359→                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7C9082] to-[#5A6F5E] flex items-center justify-center text-white text-xs font-bold">{sendingName[0]?.toUpperCase() || '?'}</div>
+   360→                </div>
+   361→                <p className="mt-4 text-xs text-[#8B7D6B]">Sending...</p>
+   362→              </motion.div>
+   363→            )}
+   364→
+   365→            {/* Phase 3: Sent! */}
+   366→            {phase === 3 && (
+   367→              <motion.div key="p3" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.4, ease }} className="text-center py-6">
+   368→                {/* Celebration burst */}
+   369→                <motion.div className="relative inline-block">
+   370→                  {[...Array(6)].map((_, i) => (
+   371→                    <motion.div key={i} className="absolute w-2 h-2 rounded-full top-1/2 left-1/2"
+   372→                      style={{ background: [COLORS.terra, COLORS.gold, COLORS.sage, COLORS.lavender, COLORS.sand, COLORS.terra][i] }}
+   373→                      initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+   374→                      animate={{ x: (Math.cos(i * 60 * Math.PI / 180)) * 40, y: (Math.sin(i * 60 * Math.PI / 180)) * 40, scale: 0, opacity: 0 }}
+   375→                      transition={{ duration: 0.8, delay: 0.1 }}
+   376→                    />
+   377→                  ))}
+   378→                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+   379→                    className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center bg-[#7C9082]/10">
+   380→                    <span className="text-3xl">✨</span>
+   381→                  </motion.div>
+   382→                </motion.div>
+   383→                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+   384→                  className="text-sm font-medium text-[#7C9082]">Sent!</motion.p>
+   385→                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+   386→                  className="text-lg font-black text-[#2D1F14]">@{sendingName.toLowerCase()} received 1 NovaCoin</motion.p>
+   387→                <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+   388→                  className="text-xs text-[#8B7D6B] mt-1">No real money moved. This was just a demo.</motion.p>
+   389→                <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+   390→                  onClick={handleReset} whileTap={{ scale: 0.96 }}
+   391→                  className="mt-5 text-xs font-semibold text-[#9B8EC4] hover:text-[#8A7DB5] cursor-pointer transition-colors">Try again →</motion.button>
+   392→              </motion.div>
+   393→            )}
+   394→          </AnimatePresence>
+   395→        </div>
+   396→      </div>
+   397→    </div>
+   398→  );
+   399→}
+   400→
+   401→/* ═══════════════════════════════════════════════════════════
+   402→   ENHANCED NETWORK VISUALIZATION
+   403→   ═══════════════════════════════════════════════════════════ */
+   404→function EnhancedNetwork() {
+   405→  const [sliderVal, setSliderVal] = useState(0);
+   406→  const stages = [
+   407→    { label: '10 people', count: 10, color: '#C9503E', connections: 8, communities: 1 },
+   408→    { label: '100 people', count: 100, color: '#D4A574', connections: 40, communities: 2 },
+   409→    { label: '1,000 people', count: 1000, color: '#7C9082', connections: 80, communities: 5 },
+   410→    { label: '10,000 people', count: 10000, color: '#9B8EC4', connections: 120, communities: 12 },
+   411→    { label: '100,000 people', count: 100000, color: '#C4A35A', connections: 180, communities: 30 },
+   412→    { label: '1,000,000 people', count: 1000000, color: '#C9503E', connections: 250, communities: 80 },
+   413→  ];
+   414→  const stage = stages[sliderVal];
+   415→  const nodeCount = Math.min(stage.count, 30);
+   416→  const connCount = Math.min(stage.connections, 40);
+   417→
+   418→  const nodes = useRef<{ x: number; y: number; c: number }[]>([]);
+   419→  if (nodes.current.length !== nodeCount || nodes.current[0]?.c !== nodeCount) {
+   420→    nodes.current = Array.from({ length: nodeCount }, (_, i) => ({
+   421→      x: 8 + (Math.sin(i * 2.39996) * 0.5 + 0.5) * 284,
+   422→      y: 5 + (Math.cos(i * 3.72471) * 0.5 + 0.5) * 120,
+   423→      c: nodeCount,
+   424→    }));
+   425→  }
+   426→
+   427→  return (
+   428→    <div className="space-y-6">
+   429→      <div className="relative bg-white rounded-2xl border border-[#2D1F14]/[0.04] shadow-[0_2px_20px_rgba(45,31,20,0.04)] p-4 overflow-hidden">
+   430→        <svg viewBox="0 0 300 130" className="w-full h-auto" style={{ minHeight: 100 }}>
+   431→          {Array.from({ length: connCount }).map((_, i) => {
+   432→            const a = i % nodeCount; const b = (i * 7 + 3) % nodeCount;
+   433→            if (a === b) return null;
+   434→            return (
+   435→              <motion.line key={`c-${sliderVal}-${i}`} x1={nodes.current[a]?.x || 0} y1={nodes.current[a]?.y || 0}
+   436→                x2={nodes.current[b]?.x || 0} y2={nodes.current[b]?.y || 0}
+   437→                stroke={stage.color} strokeOpacity={0.06 + sliderVal * 0.025} strokeWidth="0.8"
+   438→                initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }}
+   439→                transition={{ duration: 0.5, delay: i * 0.008 }}
+   440→              />
+   441→            );
+   442→          })}
+   443→          {nodes.current.map((pos, i) => (
+   444→            <motion.circle key={`n-${sliderVal}-${i}`} cx={pos.x} cy={pos.y}
+   445→              r={i === 0 ? 4 : 2 + sliderVal * 0.15}
+   446→              fill={stage.color}
+   447→              initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 0.5 + Math.random() * 0.5 }}
+   448→              transition={{ type: 'spring', stiffness: 400, damping: 20, delay: i * 0.015 }}
+   449→            />
+   450→          ))}
+   451→          {stage.count > nodeCount && (
+   452→            <motion.text key={`plus-${sliderVal}`} x={285} y={65} fill={stage.color} fontSize="11" fontWeight="600" opacity="0.4" textAnchor="end"
+   453→              initial={{ opacity: 0 }} animate={{ opacity: 0.4 }}>+{(stage.count - nodeCount).toLocaleString()}</motion.text>
+   454→          )}
+   455→        </svg>
+   456→        <motion.div key={stage.label} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-1">
+   457→          <span className="text-2xl font-black" style={{ color: stage.color }}><AnimNum value={stage.count} /></span>
+   458→          <span className="text-sm text-[#8B7D6B] ml-1">people</span>
+   459→          {stage.communities > 1 && (
+   460→            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+   461→              className="ml-3 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: `${stage.color}12`, color: stage.color }}>
+   462→              {stage.communities} communities
+   463→            </motion.span>
+   464→          )}
+   465→        </motion.div>
+   466→      </div>
+   467→      <div className="px-2">
+   468→        <input type="range" min="0" max="5" step="1" value={sliderVal}
+   469→          onChange={(e) => setSliderVal(Number(e.target.value))}
+   470→          className="w-full h-2 rounded-full appearance-none cursor-pointer accent-[#C9503E]"
+   471→          style={{ background: `linear-gradient(to right, ${stage.color} ${(sliderVal / 5) * 100}%, rgba(45,31,20,0.08) ${(sliderVal / 5) * 100}%)` }}
+   472→        />
+   473→        <div className="flex justify-between mt-1.5 text-[10px] text-[#8B7D6B]/40">
+   474→          <span>10</span><span>1M</span>
+   475→        </div>
+   476→      </div>
+   477→      <Reveal delay={0.2}>
+   478→        <p className="text-center text-sm text-[#2D1F14]/60 font-medium">
+   479→          More people <span style={{ color: stage.color }}>→</span> more connections <span style={{ color: stage.color }}>→</span> more places to use it.
+   480→        </p>
+   481→        <p className="text-center text-[10px] text-[#8B7D6B]/40 mt-1 italic">That's the idea.</p>
+   482→      </Reveal>
+   483→    </div>
+   484→  );
+   485→}
+   486→
+   487→/* ═══════════════════════════════════════════════════════════
+   488→   MORPHING TYPOGRAPHY: BUY → HOLD → SEND → USE
+   489→   ═══════════════════════════════════════════════════════════ */
+   490→function MorphingWords() {
+   491→  const words = ['BUY', 'HOLD', 'SEND', 'USE'];
+   492→  const colors = [COLORS.terra, COLORS.sage, COLORS.lavender, COLORS.gold];
+   493→  const [idx, setIdx] = useState(0);
+   494→  useEffect(() => {
+   495→    const iv = setInterval(() => setIdx((p) => (p + 1) % words.length), 2000);
+   496→    return () => clearInterval(iv);
+   497→  }, []);
+   498→  return (
+   499→    <div className="h-16 flex items-center justify-center overflow-hidden">
+   500→      <AnimatePresence mode="wait">
+   501→        <motion.span key={words[idx]}
+   502→          initial={{ opacity: 0, y: 30, rotateX: -40, filter: 'blur(6px)' }}
+   503→          animate={{ opacity: 1, y: 0, rotateX: 0, filter: 'blur(0px)' }}
+   504→          exit={{ opacity: 0, y: -30, rotateX: 40, filter: 'blur(6px)' }}
+   505→          transition={{ duration: 0.45, ease }}
+   506→          className="text-5xl md:text-6xl font-black tracking-tight"
+   507→          style={{ color: colors[idx] }}
+   508→        >{words[idx]}</motion.span>
+   509→      </AnimatePresence>
+   510→    </div>
+   511→  );
+   512→}
+   513→
+   514→/* ═══════════════════════════════════════════════════════════
+   515→   JUDGEMENT WALL
+   516→   ═══════════════════════════════════════════════════════════ */
+   517→function JudgementWall() {
+   518→  const opinions = [
+   519→    { emoji: '❤️', verdict: 'Would try it', quote: 'If everyone around me used it, I definitely would.', color: COLORS.terra },
+   520→    { emoji: '🤔', verdict: 'Not convinced', quote: "Why wouldn't I just use my bank?", color: COLORS.sand },
+   521→    { emoji: '🔥', verdict: 'Interesting', quote: 'The network idea is what makes this different.', color: COLORS.gold },
+   522→    { emoji: '😂', verdict: 'Honest take', quote: 'This could either be genius or madness.', color: COLORS.lavender },
+   523→    { emoji: '💡', verdict: 'I see it', quote: 'If I can pay at the cafeteria with it, yes.', color: COLORS.sage },
+   524→    { emoji: ' skeptical', verdict: 'Show me first', quote: "I'll believe it when I see it working.", color: COLORS.terra },
+   525→  ];
+   526→  const [active, setActive] = useState(0);
+   527→  useEffect(() => {
+   528→    const iv = setInterval(() => setActive((p) => (p + 1) % opinions.length), 4000);
+   529→    return () => clearInterval(iv);
+   530→  }, []);
+   531→  const op = opinions[active];
+   532→  return (
+   533→    <div className="max-w-md mx-auto">
+   534→      <Reveal>
+   535→        <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#8B7D6B] mb-6 text-center">The internet is judging us</p>
+   536→      </Reveal>
+   537→      <div className="relative h-[140px]">
+   538→        <AnimatePresence mode="wait">
+   539→          <motion.div key={active}
+   540→            initial={{ x: 80, opacity: 0, rotate: 2 }}
+   541→            animate={{ x: 0, opacity: 1, rotate: 0 }}
+   542→            exit={{ x: -80, opacity: 0, rotate: -2 }}
+   543→            transition={{ duration: 0.5, ease }}
+   544→            className="absolute inset-0 bg-white rounded-2xl p-6 border border-[#2D1F14]/[0.04] shadow-[0_2px_20px_rgba(45,31,20,0.04)] flex flex-col justify-center"
+   545→            style={{ borderLeft: `3px solid ${op.color}` }}
+   546→          >
+   547→            <div className="flex items-center gap-2 mb-2">
+   548→              <span className="text-sm">{op.verdict.includes('skeptical') ? '🤨' : op.emoji}</span>
+   549→              <span className="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: op.color }}>{op.verdict}</span>
+   550→            </div>
+   551→            <p className="text-sm font-medium text-[#2D1F14]/80 leading-relaxed italic">&ldquo;{op.quote}&rdquo;</p>
+   552→          </motion.div>
+   553→        </AnimatePresence>
+   554→      </div>
+   555→      <div className="flex justify-center gap-1.5 mt-4">
+   556→        {opinions.map((_, i) => (
+   557→          <button key={i} onClick={() => setActive(i)} className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${i === active ? 'bg-[#2D1F14] w-5' : 'bg-[#2D1F14]/15'}`} />
+   558→        ))}
+   559→      </div>
+   560→    </div>
+   561→  );
+   562→}
+   563→
+   564→/* ═══════════════════════════════════════════════════════════
+   565→   VERDICT CARD (after feedback)
+   566→   ═══════════════════════════════════════════════════════════ */
+   567→function VerdictCard({ verdict, onShare }: { verdict: string; onShare: () => void }) {
+   568→  const verdictMap: Record<string, { emoji: string; label: string; color: string }> = {
+   569→    yes: { emoji: '❤️', label: 'Would try it', color: COLORS.terra },
+   570→    maybe: { emoji: '🤔', label: 'Not convinced yet', color: COLORS.gold },
+   571→    no: { emoji: '❌', label: "Doesn't see the point", color: '#8B7D6B' },
+   572→  };
+   573→  const v = verdictMap[verdict] || verdictMap.maybe;
+   574→  return (
+   575→    <motion.div
+   576→      initial={{ opacity: 0, scale: 0.5, rotateY: 90 }}
+   577→      animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+   578→      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+   579→      className="relative bg-white rounded-3xl p-8 border border-[#2D1F14]/[0.06] shadow-[0_8px_40px_rgba(45,31,20,0.08)] text-center overflow-hidden"
+   580→    >
+   581→      {/* Shine effect */}
+   582→      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+   583→        <div className="absolute top-0 -left-full w-1/2 h-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)', animation: 'shimmer 2s ease-in-out 0.5s 1' }} />
+   584→      </div>
+   585→      <div className="relative">
+   586→        <motion.span className="text-5xl block mb-3" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.3 }}>{v.emoji}</motion.span>
+   587→        <p className="text-[10px] font-bold tracking-[0.15em] uppercase mb-2" style={{ color: v.color }}>Your verdict</p>
+   588→        <p className="text-2xl font-black text-[#2D1F14] mb-4">{v.label}</p>
+   589→        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: `${v.color}10` }}>
+   590→          <NovacoinLogo size="sm" />
+   591→          <span className="text-[10px] font-semibold text-[#2D1F14]/50">NovaCoin Concept</span>
+   592→        </div>
+   593→      </div>
+   594→    </motion.div>
+   595→  );
+   596→}
+   597→
+   598→/* ═══════════════════════════════════════════════════════════
+   599→   STEP DOTS
+   600→   ═══════════════════════════════════════════════════════════ */
+   601→function StepDots({ current, total }: { current: number; total: number }) {
+   602→  return (
+   603→    <div className="flex items-center justify-center gap-2 mb-8">
+   604→      {Array.from({ length: total }).map((_, i) => (
+   605→        <motion.div key={i} className={`rounded-full transition-all duration-300 ${i === current ? 'bg-[#2D1F14] w-6 h-2' : i < current ? 'bg-[#2D1F14]/30 w-2 h-2' : 'bg-[#2D1F14]/10 w-2 h-2'}`} layout />
+   606→      ))}
+   607→    </div>
+   608→  );
+   609→}
+   610→
+   611→/* ═══════════════════════════════════════════════════════════
+   612→   SCROLL PROGRESS BAR
+   613→   ═══════════════════════════════════════════════════════════ */
+   614→function ScrollProgress() {
+   615→  const { scrollYProgress } = useScroll();
+   616→  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+   617→  return (
+   618→    <motion.div className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left" style={{ scaleX, background: `linear-gradient(90deg, ${COLORS.terra}, ${COLORS.gold})` }} />
+   619→  );
+   620→}
+   621→
+   622→/* ═══════════════════════════════════════════════════════════
+   623→   MAIN PAGE
+   624→   ═══════════════════════════════════════════════════════════ */
+   625→
+   626→export default function Page() {
+   627→  const { scrollY } = useScroll();
+   628→  const heroOpacity = useTransform(scrollY, [0, 350], [1, 0]);
+   629→  const heroScale = useTransform(scrollY, [0, 350], [1, 0.97]);
+   630→
+   631→  /* Feedback state */
+   632→  const [step, setStep] = useState(0);
+   633→  const [q1, setQ1] = useState<string | null>(null);
+   634→  const [q2, setQ2] = useState<string[]>([]);
+   635→  const [q3, setQ3] = useState<string | null>(null);
+   636→  const [q4, setQ4] = useState<string | null>(null);
+   637→  const [feedbackText, setFeedbackText] = useState('');
+   638→  const [name, setName] = useState('');
+   639→  const [contact, setContact] = useState('');
+   640→  const [submitted, setSubmitted] = useState(false);
+   641→  const [submitting, setSubmitting] = useState(false);
+   642→  const [copied, setCopied] = useState(false);
+   643→  const [mobileMenu, setMobileMenu] = useState(false);
+   644→
+   645→  const submitFeedback = async () => {
+   646→    if (submitting) return;
+   647→    setSubmitting(true);
+   648→    try { await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'feedback', q1_what_is_it: q1, q2_use_cases: q2, q3_why_not: q3, q4_would_try: q4, open_feedback: feedbackText }) }); } catch {}
+   649→    setSubmitting(false); setSubmitted(true); setStep(5);
+   650→  };
+   651→
+   652→  const submitInterest = async () => {
+   653→    if (submitting || !name.trim() || !contact.trim()) return;
+   654→    setSubmitting(true);
+   655→    try { await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'interest', name: name.trim(), contact: contact.trim() }) }); } catch {}
+   656→    setSubmitting(false); setStep(6);
+   657→  };
+   658→
+   659→  const toggleMulti = (v: string) => setQ2((p) => p.includes(v) ? p.filter((x) => x !== v) : [...p, v]);
+   660→
+   661→  const shareUrl = typeof window !== 'undefined' ? window.location.href : PAGE_URL;
+   662→  const copyLink = () => { navigator.clipboard.writeText(shareUrl); setCopied(true); setTimeout(() => setCopied(false), 2000); };
+   663→  const nav = (id: string) => { scrollTo(id); setMobileMenu(false); };
+   664→
+   665→  return (
+   666→    <div className="min-h-screen bg-[#FFF9F5] text-[#2D1F14]">
+   667→      <ScrollProgress />
+   668→
+   669→      {/* ═══ NAV ═══ */}
+   670→      <motion.nav initial={{ y: -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }}
+   671→        className="fixed top-[2px] left-0 right-0 z-50 bg-[#FFF9F5]/80 backdrop-blur-xl border-b border-[#2D1F14]/[0.04]">
+   672→        <div className="max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
+   673→          <NovacoinLogo />
+   674→          <div className="hidden md:flex items-center gap-6 text-xs text-[#8B7D6B]">
+   675→            <button onClick={() => nav('try-it')} className="hover:text-[#2D1F14] transition-colors cursor-pointer">Try it</button>
+   676→            <button onClick={() => nav('the-idea')} className="hover:text-[#2D1F14] transition-colors cursor-pointer">The idea</button>
+   677→          </div>
+   678→          <motion.button onClick={() => nav('validate')} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+   679→            className="text-xs font-semibold bg-[#2D1F14] text-[#FFF9F5] px-4 py-2 rounded-full hover:bg-[#3D2F24] transition-colors cursor-pointer">Give feedback</motion.button>
+   680→          <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden ml-3 p-2 cursor-pointer" aria-label="Menu">
+   681→            <div className="w-4 flex flex-col gap-1">
+   682→              <span className={`block h-px bg-[#2D1F14] transition-all duration-300 ${mobileMenu ? 'rotate-45 translate-y-[3px]' : ''}`} />
+   683→              <span className={`block h-px bg-[#2D1F14] transition-all duration-300 ${mobileMenu ? '-rotate-45 -translate-y-[3px]' : ''}`} />
+   684→            </div>
+   685→          </button>
+   686→        </div>
+   687→        <AnimatePresence>{mobileMenu && (
+   688→          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="md:hidden overflow-hidden border-t border-[#2D1F14]/[0.04] bg-[#FFF9F5]/95 backdrop-blur-xl">
+   689→            <div className="px-5 py-4 space-y-3">
+   690→              <button onClick={() => nav('try-it')} className="block text-sm text-[#8B7D6B] hover:text-[#2D1F14] cursor-pointer">Try it</button>
+   691→              <button onClick={() => nav('the-idea')} className="block text-sm text-[#8B7D6B] hover:text-[#2D1F14] cursor-pointer">The idea</button>
+   692→              <button onClick={() => nav('validate')} className="block text-sm font-semibold text-[#C9503E] cursor-pointer">Give feedback</button>
+   693→            </div>
+   694→          </motion.div>
+   695→        )}</AnimatePresence>
+   696→      </motion.nav>
+   697→
+   698→      {/* ═══════════════════════════════════════════════════════════════
+   699→         HERO: LIVING NETWORK
+   700→         ═══════════════════════════════════════════════════════════════ */}
+   701→      <motion.section style={{ opacity: heroOpacity, scale: heroScale }} className="relative pt-28 pb-8 md:pt-36 md:pb-16 px-5 overflow-hidden">
+   702→        {/* Ambient gradients */}
+   703→        <div className="absolute top-0 right-0 w-[500px] h-[500px] opacity-25 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 20%, rgba(201,80,62,0.1) 0%, transparent 60%)', animation: 'blob 12s ease-in-out infinite' }} />
+   704→        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle at 30% 80%, rgba(124,144,130,0.15) 0%, transparent 60%)', animation: 'blob 14s ease-in-out infinite 3s' }} />
+   705→
+   706→        <div className="relative max-w-2xl mx-auto text-center">
+   707→          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+   708→            <span className="inline-flex items-center gap-2 bg-[#2D1F14]/[0.04] text-[#8B7D6B] text-[11px] font-medium px-4 py-1.5 rounded-full">
+   709→              <span className="w-1.5 h-1.5 rounded-full bg-[#C9503E]" style={{ animation: 'pulse-soft 2s infinite' }} />
+   710→              {"We're exploring an idea"}
+   711→            </span>
+   712→          </motion.div>
+   713→
+   714→          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.25, ease }}
+   715→            className="mt-6 text-[clamp(2rem,6vw,3.4rem)] font-black leading-[1.06] tracking-tight text-[#2D1F14]">
+   716→            What if digital money
+   717→            <br />
+   718→            <span className="italic font-medium" style={{ color: '#C9503E' }}>felt this easy?</span>
+   719→          </motion.h1>
+   720→
+   721→          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}
+   722→            className="mt-5 text-[#8B7D6B] text-base md:text-lg max-w-md mx-auto leading-relaxed">
+   723→            {"We're exploring a simple digital asset. Buy, hold, send, receive. Starting with everyday Nigerians."}
+   724→          </motion.p>
+   725→
+   726→          <LivingHeroNetwork />
+   727→
+   728→          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.8 }} className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+   729→            <SoftButton onClick={() => nav('try-it')}>Try it yourself</SoftButton>
+   730→            <SoftButton variant="secondary" onClick={() => nav('validate')}>Skip to feedback</SoftButton>
+   731→          </motion.div>
+   732→        </div>
+   733→      </motion.section>
+   734→
+   735→      {/* ═══════════════════════════════════════════════════════════════
+   736→         SOCIAL COIN CONCEPT
+   737→         ═══════════════════════════════════════════════════════════════ */}
+   738→      <section className="py-16 md:py-24 px-5">
+   739→        <div className="max-w-3xl mx-auto">
+   740→          <Reveal>
+   741→            <div className="text-center mb-10">
+   742→              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#9B8EC4] mb-3">The feeling</p>
+   743→              <h2 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">
+   744→                Imagine sending money
+   745→                <br />
+   746→                <span className="italic font-medium" style={{ color: '#9B8EC4' }}>like sending a message.</span>
+   747→              </h2>
+   748→              <p className="mt-4 text-[#8B7D6B] max-w-sm mx-auto text-sm leading-relaxed">
+   749→                {"That's the idea. Same casual energy. Same speed. But you're sending actual value, not just words."}
+   750→              </p>
+   751→            </div>
+   752→          </Reveal>
+   753→          <Reveal delay={0.15}>
+   754→            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto">
+   755→              {/* Message side */}
+   756→              <div className="bg-white rounded-2xl p-5 border border-[#2D1F14]/[0.04] shadow-[0_2px_16px_rgba(45,31,20,0.05)]">
+   757→                <div className="flex items-center gap-2 mb-4">
+   758→                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#9B8EC4] to-[#7C6FAF] flex items-center justify-center text-white text-[9px] font-bold">A</div>
+   759→                  <span className="text-[11px] font-semibold text-[#2D1F14]">Amaka</span>
+   760→                </div>
+   761→                <div className="bg-[#9B8EC4]/[0.08] rounded-2xl rounded-tl-md px-4 py-3">
+   762→                  <p className="text-sm text-[#2D1F14]/80">Hey! Thanks for the data 💜</p>
+   763→                </div>
+   764→                <p className="mt-3 text-[10px] text-[#8B7D6B]/40 text-center">Sending a message</p>
+   765→              </div>
+   766→              {/* NovaCoin side */}
+   767→              <div className="bg-white rounded-2xl p-5 border border-[#C9503E]/[0.12] shadow-[0_2px_16px_rgba(45,31,20,0.05)]">
+   768→                <div className="flex items-center gap-2 mb-4">
+   769→                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C9503E] to-[#D4A574] flex items-center justify-center text-white text-[9px] font-bold">A</div>
+   770→                  <span className="text-[11px] font-semibold text-[#2D1F14]">Amaka</span>
+   771→                </div>
+   772→                <div className="bg-[#C9503E]/[0.06] rounded-2xl rounded-tl-md px-4 py-3">
+   773→                  <p className="text-sm font-semibold text-[#2D1F14]">Sent you 1 NovaCoin ✨</p>
+   774→                </div>
+   775→                <p className="mt-3 text-[10px] text-[#C9503E]/50 text-center font-medium">Sending money</p>
+   776→              </div>
+   777→            </div>
+   778→            <div className="mt-8 text-center">
+   779→              <p className="text-[#2D1F14]/15 text-3xl font-black leading-none select-none" style={{ fontFamily: 'Georgia, serif' }}>&ldquo;</p>
+   780→              <p className="text-lg md:text-xl font-black text-[#2D1F14] -mt-3 leading-snug">
+   781→                Same energy.<br /><span className="italic font-medium" style={{ color: '#C9503E' }}>Different value.</span>
+   782→              </p>
+   783→            </div>
+   784→          </Reveal>
+   785→        </div>
+   786→      </section>
+   787→
+   788→      {/* ═══════════════════════════════════════════════════════════════
+   789→         MORPHING WORDS + WHAT IS THIS
+   790→         ═══════════════════════════════════════════════════════════════ */}
+   791→      <section className="py-16 md:py-24 px-5">
+   792→        <div className="max-w-3xl mx-auto">
+   793→          <Reveal>
+   794→            <div className="text-center mb-6">
+   795→              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#C9503E] mb-3">How it works</p>
+   796→              <h2 className="text-2xl md:text-3xl font-black tracking-tight">
+   797→                So... what exactly is NovaCoin?
+   798→              </h2>
+   799→            </div>
+   800→          </Reveal>
+   801→          <Reveal delay={0.1}>
+   802→            <MorphingWords />
+   803→          </Reveal>
+   804→          <Reveal delay={0.2}>
+   805→            <p className="text-center text-[#8B7D6B] text-sm max-w-sm mx-auto leading-relaxed mt-4">
+   806→              {"It's an idea for a digital asset that people could buy with naira, keep, send to other people, receive from others, and eventually use across a growing network."}
+   807→            </p>
+   808→          </Reveal>
+   809→        </div>
+   810→      </section>
+   811→
+   812→      {/* ═══════════════════════════════════════════════════════════════
+   813→         TRY IT: INTERACTIVE DEMO
+   814→         ═══════════════════════════════════════════════════════════════ */}
+   815→      <section id="try-it" className="py-16 md:py-24 px-5">
+   816→        <div className="max-w-lg mx-auto">
+   817→          <Reveal>
+   818→            <div className="text-center mb-10">
+   819→              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#7C9082] mb-3">Don't just read about it</p>
+   820→              <h2 className="text-2xl md:text-3xl font-black tracking-tight">Try it.</h2>
+   821→              <p className="mt-3 text-[#8B7D6B] text-sm max-w-xs mx-auto">No real money. No sign-up. Just a feel for how it could work.</p>
+   822→            </div>
+   823→          </Reveal>
+   824→          <Reveal delay={0.15}>
+   825→            <TryItDemo />
+   826→          </Reveal>
+   827→        </div>
+   828→      </section>
+   829→
+   830→      {/* ═══════════════════════════════════════════════════════════════
+   831→         WHY NOT BANK TRANSFER?
+   832→         ═══════════════════════════════════════════════════════════════ */}
+   833→      <section className="py-16 md:py-20 px-5">
+   834→        <div className="max-w-2xl mx-auto">
+   835→          <Reveal>
+   836→            <div className="bg-white rounded-3xl p-8 md:p-12 border border-[#2D1F14]/[0.04] shadow-[0_2px_20px_rgba(45,31,20,0.04)] text-center relative overflow-hidden">
+   837→              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 opacity-30 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(201,80,62,0.1) 0%, transparent 70%)' }} />
+   838→              <div className="relative">
+   839→                <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#8B7D6B] mb-4">You might be thinking...</p>
+   840→                <h2 className="text-xl md:text-2xl font-black tracking-tight leading-snug">
+   841→                  &ldquo;Why not just use bank transfer?&rdquo;
+   842→                </h2>
+   843→                <div className="mt-8 space-y-4">
+   844→                  <p className="text-[15px] text-[#2D1F14]/70 leading-relaxed">{"That's exactly what we're trying to understand."}</p>
+   845→                  <p className="text-[15px] text-[#2D1F14] font-medium leading-relaxed">What would make a new digital asset useful enough that people would actually choose it?</p>
+   846→                  <p className="text-sm text-[#8B7D6B]/60 italic">{'We don\'t know the answer yet. That\'s why we need your honest feedback.'}</p>
+   847→                </div>
+   848→              </div>
+   849→            </div>
+   850→          </Reveal>
+   851→        </div>
+   852→      </section>
+   853→
+   854→      {/* ═══════════════════════════════════════════════════════════════
+   855→         ONE IMPORTANT THING
+   856→         ═══════════════════════════════════════════════════════════════ */}
+   857→      <section className="py-10 md:py-14 px-5">
+   858→        <div className="max-w-md mx-auto">
+   859→          <Reveal>
+   860→            <div className="flex items-start gap-3 bg-[#C9503E]/[0.04] rounded-2xl p-5 border border-[#C9503E]/10">
+   861→              <span className="text-lg mt-0.5">⚡</span>
+   862→              <div>
+   863→                <p className="text-sm font-bold text-[#2D1F14] mb-1">One important thing</p>
+   864→                <p className="text-[13px] text-[#2D1F14]/60 leading-relaxed">{"This isn't being presented as a guaranteed investment or a way to make money. We're exploring whether a digital asset can become useful because lots of people use it."}</p>
+   865→              </div>
+   866→            </div>
+   867→          </Reveal>
+   868→        </div>
+   869→      </section>
+   870→
+   871→      {/* ═══════════════════════════════════════════════════════════════
+   872→         THE BIGGER IDEA (NETWORK)
+   873→         ═══════════════════════════════════════════════════════════════ */}
+   874→      <section id="the-idea" className="py-16 md:py-24 px-5">
+   875→        <div className="max-w-lg mx-auto">
+   876→          <Reveal>
+   877→            <div className="text-center mb-10">
+   878→              <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#9B8EC4] mb-3">The idea</p>
+   879→              <h2 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">
+   880→                The more people who use it,
+   881→                <br />
+   882→                <span className="italic font-medium">the more people you can use it with.</span>
+   883→              </h2>
+   884→            </div>
+   885→          </Reveal>
+   886→          <Reveal delay={0.1}>
+   887→            <EnhancedNetwork />
+   888→          </Reveal>
+   889→        </div>
+   890→      </section>
+   891→
+   892→      {/* ═══════════════════════════════════════════════════════════════
+   893→         STARTING SMALL
+   894→         ═══════════════════════════════════════════════════════════════ */}
+   895→      <section className="py-16 md:py-20 px-5">
+   896→        <div className="max-w-3xl mx-auto text-center">
+   897→          <Reveal>
+   898→            <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#D4A574] mb-3">Ground zero</p>
+   899→            <h2 className="text-2xl md:text-3xl font-black tracking-tight">Maybe it starts with one university.</h2>
+   900→            <p className="mt-4 text-[#8B7D6B] max-w-md mx-auto text-[15px] leading-relaxed">A few students. Then a few communities. Then thousands of people. We want to see what happens.</p>
+   901→          </Reveal>
+   902→          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-lg mx-auto">
+   903→            {[
+   904→              { num: 3000, label: 'students', emoji: '📚' },
+   905→              { num: 20, label: 'communities', emoji: '🌍' },
+   906→              { num: 10, label: 'creators', emoji: '🎨' },
+   907→              { num: 10, label: 'local businesses', emoji: '🏪' },
+   908→            ].map((item, i) => (
+   909→              <Reveal key={i} delay={0.1 + i * 0.08}>
+   910→                <motion.div whileHover={{ y: -4, shadow: '0 8px 30px rgba(45,31,20,0.1)' }} className="bg-white rounded-2xl px-4 py-4 border border-[#2D1F14]/[0.04] shadow-[0_1px_8px_rgba(45,31,20,0.03)] cursor-default">
+   911→                  <span className="text-lg block mb-1" style={{ animation: `float ${3.5 + i * 0.3}s ease-in-out infinite ${i * 0.3}s` }}>{item.emoji}</span>
+   912→                  <p className="text-lg font-black text-[#2D1F14]"><AnimNum value={item.num} /></p>
+   913→                  <p className="text-[10px] text-[#8B7D6B] uppercase tracking-wide">{item.label}</p>
+   914→                </motion.div>
+   915→              </Reveal>
+   916→            ))}
+   917→          </div>
+   918→          <Reveal delay={0.4}>
+   919→            <p className="mt-3 text-[10px] text-[#8B7D6B]/40 italic">These are hypothetical examples, not existing traction.</p>
+   920→            <p className="mt-8 text-[15px] text-[#2D1F14]/70 max-w-sm mx-auto leading-relaxed">Could something like this grow from a small community into something much bigger?</p>
+   921→          </Reveal>
+   922→        </div>
+   923→      </section>
+   924→
+   925→      {/* ═══════════════════════════════════════════════════════════════
+   926→         JUDGEMENT WALL
+   927→         ═══════════════════════════════════════════════════════════════ */}
+   928→      <section className="py-16 md:py-24 px-5">
+   929→        <JudgementWall />
+   930→      </section>
+   931→
+   932→      {/* ═══════════════════════════════════════════════════════════════
+   933→         VALIDATION: MULTI-STEP FEEDBACK
+   934→         ═══════════════════════════════════════════════════════════════ */}
+   935→      <section id="validate" className="py-16 md:py-24 px-5">
+   936→        <div className="max-w-lg mx-auto">
+   937→          <AnimatePresence mode="wait">
+   938→            {/* STEP 0: INTRO */}
+   939→            {step === 0 && (
+   940→              <motion.div key="s0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
+   941→                <div className="text-center mb-8">
+   942→                  <p className="text-xs font-semibold tracking-[0.15em] uppercase text-[#C9503E] mb-3">Your honest opinion is more valuable than a like.</p>
+   943→                  <h2 className="text-2xl md:text-3xl font-black tracking-tight">Okay. Would you actually use this?</h2>
+   944→                  <p className="mt-3 text-[#8B7D6B] text-sm max-w-sm mx-auto">4 quick questions. No sign-up required. Takes about 30 seconds.</p>
+   945→                </div>
+   946→                <motion.button onClick={() => setStep(1)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+   947→                  className="w-full bg-[#2D1F14] text-[#FFF9F5] font-bold text-sm py-4 rounded-2xl hover:bg-[#3D2F24] transition-all cursor-pointer">{"Let's go"}</motion.button>
+   948→              </motion.div>
+   949→            )}
+   950→
+   951→            {/* STEP 1: WHAT IS IT */}
+   952→            {step === 1 && (
+   953→              <motion.div key="s1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}>
+   954→                <StepDots current={0} total={4} />
+   955→                <p className="text-xs font-semibold text-[#8B7D6B]/50 mb-1">Question 1 of 4</p>
+   956→                <h3 className="text-xl font-black tracking-tight mb-6">What do you think NovaCoin is?</h3>
+   957→                <div className="space-y-3">
+   958→                  {[
+   959→                    { label: 'Digital money', value: 'digital-money' },
+   960→                    { label: 'An investment', value: 'investment' },
+   961→                    { label: 'A payment app', value: 'payment-app' },
+   962→                    { label: `I'm honestly not sure`, value: 'not-sure' },
+   963→                  ].map((opt) => (
+   964→                    <SelectCard key={opt.value} label={opt.label} selected={q1 === opt.value} onClick={() => { setQ1(opt.value); setTimeout(() => setStep(2), 300); }} />
+   965→                  ))}
+   966→                </div>
+   967→              </motion.div>
+   968→            )}
+   969→
+   970→            {/* STEP 2: USE CASES (MULTI) */}
+   971→            {step === 2 && (
+   972→              <motion.div key="s2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}>
+   973→                <StepDots current={1} total={4} />
+   974→                <p className="text-xs font-semibold text-[#8B7D6B]/50 mb-1">Question 2 of 4</p>
+   975→                <h3 className="text-xl font-black tracking-tight mb-2">What would you actually use it for?</h3>
+   976→                <p className="text-xs text-[#8B7D6B]/50 mb-6">Pick as many as you like.</p>
+   977→                <div className="space-y-3">
+   978→                  {[
+   979→                    { label: 'Send money to friends', value: 'send-friends' },
+   980→                    { label: 'Hold it', value: 'hold' },
+   981→                    { label: 'Pay for things', value: 'pay' },
+   982→                    { label: 'Receive money', value: 'receive' },
+   983→                    { label: 'Send money to family', value: 'send-family' },
+   984→                    { label: 'Use it with online communities', value: 'communities' },
+   985→                    { label: `I don't see a use for it yet`, value: 'no-use' },
+   986→                  ].map((opt) => (
+   987→                    <SelectCard key={opt.value} label={opt.label} selected={q2.includes(opt.value)} multi onClick={() => toggleMulti(opt.value)} />
+   988→                  ))}
+   989→                </div>
+   990→                <motion.button onClick={() => setStep(3)} whileTap={{ scale: 0.98 }} className="mt-6 w-full bg-[#2D1F14] text-[#FFF9F5] font-semibold text-sm py-3.5 rounded-xl hover:bg-[#3D2F24] transition-all cursor-pointer">Continue</motion.button>
+   991→              </motion.div>
+   992→            )}
+   993→
+   994→            {/* STEP 3: BIGGEST OBJECTION */}
+   995→            {step === 3 && (
+   996→              <motion.div key="s3" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}>
+   997→                <StepDots current={2} total={4} />
+   998→                <p className="text-xs font-semibold text-[#8B7D6B]/50 mb-1">Question 3 of 4</p>
+   999→                <h3 className="text-xl font-black tracking-tight mb-6">What's the biggest reason you might <em>not</em> use it?</h3>
+  1000→                <div className="space-y-3">
+  1001→                  {[
+  1002→                    { label: `I already use bank transfers`, value: 'bank-transfer' },
+  1003→                    { label: `I don't trust digital assets`, value: 'no-trust' },
+  1004→                    { label: `I don't understand them`, value: 'dont-understand' },
+  1005→                    { label: 'I would worry about losing money', value: 'lose-money' },
+  1006→                    { label: 'I would worry about scams', value: 'scams' },
+  1007→                    { label: `I don't see the need`, value: 'no-need' },
+  1008→                    { label: 'Something else', value: 'other' },
+  1009→                  ].map((opt) => (
+  1010→                    <SelectCard key={opt.value} label={opt.label} selected={q3 === opt.value} onClick={() => { setQ3(opt.value); setTimeout(() => setStep(4), 300); }} />
+  1011→                  ))}
+  1012→                </div>
+  1013→              </motion.div>
+  1014→            )}
+  1015→
+  1016→            {/* STEP 4: WOULD YOU TRY? */}
+  1017→            {step === 4 && (
+  1018→              <motion.div key="s4" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.35 }}>
+  1019→                <StepDots current={3} total={4} />
+  1020→                <p className="text-xs font-semibold text-[#8B7D6B]/50 mb-1">Question 4 of 4</p>
+  1021→                <h3 className="text-xl font-black tracking-tight mb-2">Now be honest...</h3>
+  1022→                <h3 className="text-2xl font-black tracking-tight mb-6">Would you actually try it?</h3>
+  1023→                <div className="space-y-3">
+  1024→                  {[
+  1025→                    { emoji: '❤️', label: `YES, I'D TRY IT`, value: 'yes' },
+  1026→                    { emoji: '🤔', label: `MAYBE, I'M NOT CONVINCED`, value: 'maybe' },
+  1027→                    { emoji: '❌', label: `NO, I DON'T SEE THE POINT`, value: 'no' },
+  1028→                  ].map((opt) => (
+  1029→                    <motion.div key={opt.value} whileTap={{ scale: 0.98 }}>
+  1030→                      <SelectCard emoji={opt.emoji} label={opt.label} selected={q4 === opt.value} onClick={() => { setQ4(opt.value); setTimeout(() => setStep(5), 300); }} />
+  1031→                    </motion.div>
+  1032→                  ))}
+  1033→                </div>
+  1034→              </motion.div>
+  1035→            )}
+  1036→
+  1037→            {/* STEP 5: VERDICT + OPEN FEEDBACK + SHARE */}
+  1038→            {step === 5 && (
+  1039→              <motion.div key="s5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
+  1040→                {!submitted ? (
+  1041→                  <>
+  1042→                    <div className="text-center mb-6">
+  1043→                      <h3 className="text-xl font-black tracking-tight">What would make you want to use it?</h3>
+  1044→                    </div>
+  1045→                    <motion.div whileHover={{ shadow: '0 4px 20px rgba(45,31,20,0.06)' }} className="bg-white rounded-2xl p-6 border border-[#2D1F14]/[0.04] shadow-[0_1px_12px_rgba(45,31,20,0.04)]">
+  1046→                      <div className="relative">
+  1047→                        <span className="absolute left-3.5 top-3.5 text-sm text-[#8B7D6B] italic">{"I'd use it if..."}</span>
+  1048→                        <textarea value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} placeholder="" rows={4}
+  1049→                          className="w-full bg-[#FFF9F5] rounded-xl border border-[#2D1F14]/[0.06] px-3.5 pt-8 pb-3 text-sm text-[#2D1F14] placeholder:text-transparent focus:outline-none focus:border-[#2D1F14]/15 focus:ring-1 focus:ring-[#2D1F14]/[0.06] resize-none transition-all" />
+  1050→                      </div>
+  1051→                      <p className="text-[10px] text-[#8B7D6B]/40 mt-2 italic">Tell us honestly. No marketing answer needed.</p>
+  1052→                      <motion.button onClick={submitFeedback} disabled={submitting} whileTap={{ scale: 0.98 }}
+  1053→                        className="mt-4 w-full bg-[#2D1F14] text-[#FFF9F5] font-bold text-sm py-3.5 rounded-xl hover:bg-[#3D2F24] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+  1054→                        {submitting ? 'Sending...' : 'Send feedback'}
+  1055→                      </motion.button>
+  1056→                    </motion.div>
+  1057→                  </>
+  1058→                ) : (
+  1059→                  <>
+  1060→                    {/* Verdict card */}
+  1061→                    <div className="mb-8">
+  1062→                      <VerdictCard verdict={q4 || 'maybe'} onShare={copyLink} />
+  1063→                    </div>
+  1064→
+  1065→                    <div className="text-center">
+  1066→                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-sm text-[#8B7D6B] max-w-xs mx-auto leading-relaxed">
+  1067→                        This is an experiment. Your answer actually helps us decide whether we should build it.
+  1068→                      </motion.p>
+  1069→                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-3 text-xs text-[#8B7D6B]/40">{"You're one of the people helping us test the idea."}</motion.p>
+  1070→                    </div>
+  1071→
+  1072→                    {/* Share */}
+  1073→                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
+  1074→                      className="mt-8 bg-white rounded-2xl p-6 border border-[#2D1F14]/[0.04] shadow-[0_1px_8px_rgba(45,31,20,0.03)]">
+  1075→                      <p className="text-sm font-semibold text-[#2D1F14] mb-1">Know someone who'd have a strong opinion?</p>
+  1076→                      <p className="text-xs text-[#8B7D6B] mb-4">Challenge them.</p>
+  1077→                      <div className="grid grid-cols-4 gap-2">
+  1078→                        <motion.a href={`https://wa.me/?text=${encodeURIComponent('I just judged this idea - NovaCoin: ' + shareUrl)}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+  1079→                          className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-[#25D366]/[0.08] hover:bg-[#25D366]/[0.15] transition-colors">
+  1080→                          <span className="text-lg">💬</span>
+  1081→                          <span className="text-[10px] font-medium text-[#2D1F14]/60">WhatsApp</span>
+  1082→                        </motion.a>
+  1083→                        <motion.button onClick={copyLink} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+  1084→                          className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-[#2D1F14]/[0.04] hover:bg-[#2D1F14]/[0.08] transition-colors cursor-pointer">
+  1085→                          <span className="text-lg">📋</span>
+  1086→                          <span className="text-[10px] font-medium text-[#2D1F14]/60">{copied ? 'Copied!' : 'Copy'}</span>
+  1087→                        </motion.button>
+  1088→                        <motion.a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('I just gave my verdict on this idea - NovaCoin')}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+  1089→                          className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-[#1DA1F2]/[0.08] hover:bg-[#1DA1F2]/[0.15] transition-colors">
+  1090→                          <span className="text-lg">𝕏</span>
+  1091→                          <span className="text-[10px] font-medium text-[#2D1F14]/60">X</span>
+  1092→                        </motion.a>
+  1093→                        <motion.a href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent('Check out this idea - NovaCoin')}`} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+  1094→                          className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-[#0088CC]/[0.08] hover:bg-[#0088CC]/[0.15] transition-colors">
+  1095→                          <span className="text-lg">✈️</span>
+  1096→                          <span className="text-[10px] font-medium text-[#2D1F14]/60">Telegram</span>
+  1097→                        </motion.a>
+  1098→                      </div>
+  1099→                    </motion.div>
+  1100→
+  1101→                    {/* Optional interest */}
+  1102→                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}
+  1103→                      className="mt-4 bg-white rounded-2xl p-6 border border-[#2D1F14]/[0.04] shadow-[#2D1F14]/[0.04]">
+  1104→                      <p className="text-sm font-semibold text-[#2D1F14] mb-1">Want to hear what happens next?</p>
+  1105→                      <p className="text-xs text-[#8B7D6B] mb-4">Completely optional.</p>
+  1106→                      <div className="space-y-3">
+  1107→                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
+  1108→                          className="w-full bg-[#FFF9F5] rounded-xl border border-[#2D1F14]/[0.06] px-4 py-3 text-sm text-[#2D1F14] placeholder:text-[#8B7D6B]/50 focus:outline-none focus:border-[#2D1F14]/15 focus:ring-1 focus:ring-[#2D1F14]/[0.06] transition-all" />
+  1109→                        <input type="text" value={contact} onChange={(e) => setContact(e.target.value)} placeholder="WhatsApp number or email"
+  1110→                          className="w-full bg-[#FFF9F5] rounded-xl border border-[#2D1F14]/[0.06] px-4 py-3 text-sm text-[#2D1F14] placeholder:text-[#8B7D6B]/50 focus:outline-none focus:border-[#2D1F14]/15 focus:ring-1 focus:ring-[#2D1F14]/[0.06] transition-all" />
+  1111→                        <motion.button onClick={submitInterest} disabled={!name.trim() || !contact.trim() || submitting} whileTap={{ scale: 0.98 }}
+  1112→                          className="w-full bg-[#C9503E] text-white font-bold text-sm py-3 rounded-xl hover:bg-[#B5432E] disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+  1113→                          {submitting ? 'Sending...' : 'Keep me posted'}
+  1114→                        </motion.button>
+  1115→                      </div>
+  1116→                    </motion.div>
+  1117→                  </>
+  1118→                )}
+  1119→              </motion.div>
+  1120→            )}
+  1121→
+  1122→            {/* STEP 6: INTEREST CONFIRMED */}
+  1123→            {step === 6 && (
+  1124→              <motion.div key="s6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="text-center py-12">
+  1125→                <motion.span className="text-4xl block mb-4" animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 0.5, delay: 0.2 }}>🌸</motion.span>
+  1126→                <h3 className="text-xl font-black tracking-tight">{"You'll hear from us."}</h3>
+  1127→                <p className="mt-3 text-[#8B7D6B] text-sm">If this idea becomes something real, you'll be among the first to know.</p>
+  1128→              </motion.div>
+  1129→            )}
+  1130→          </AnimatePresence>
+  1131→        </div>
+  1132→      </section>
+  1133→
+  1134→      {/* FOOTER */}
+  1135→      <footer className="border-t border-[#2D1F14]/[0.04] px-5 py-8">
+  1136→        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+  1137→          <div className="flex items-center gap-2">
+  1138→            <NovacoinLogo size="sm" />
+  1139→            <span className="text-[10px] text-[#8B7D6B]/40">·</span>
+  1140→            <span className="text-[10px] text-[#8B7D6B]/40">Concept prototype</span>
+  1141→          </div>
+  1142→          <p className="text-[10px] text-[#8B7D6B]/30 text-center">Not a financial product. Not investment advice. Just an idea being explored.</p>
+  1143→        </div>
+  1144→      </footer>
+  1145→    </div>
+  1146→  );
+  1147→}
+  1148→

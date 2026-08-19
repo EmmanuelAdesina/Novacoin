@@ -1,0 +1,1609 @@
+# BUILD A NEXT-GENERATION PROTOTYPE FOR A MASS-MARKET NIGERIAN DIGITAL ASSET NETWORK
+
+## THE IDEA — UNDERSTAND THIS FIRST
+
+We are exploring a new consumer digital-asset network designed primarily for **ordinary Nigerians**, especially young, mobile-first users.
+
+The concept is simple:
+
+A person can open the app, buy the network's digital asset with Nigerian naira, hold it, watch its value change, send it to another person, receive it, and eventually sell it back.
+
+The long-term vision is much bigger than a coin.
+
+We are trying to create a **large social and economic network around one digital asset**.
+
+Think:
+
+**Buy → Hold → Send → Receive → Use → Sell**
+
+The product should make this incredibly easy.
+
+The user should NOT need to understand blockchain.
+
+They should NOT need to understand wallets, gas fees, smart contracts, bridges, chains, RPCs, seed phrases, or technical crypto terminology.
+
+The technology should disappear behind an incredibly simple consumer experience.
+
+---
+
+# THE MOST IMPORTANT PRODUCT IDEA
+
+This is **not an enterprise fintech dashboard.**
+
+This is **not a corporate treasury platform.**
+
+This is **not a serious-looking banking app.**
+
+This is **not a developer tool.**
+
+This is **not a crypto exchange clone.**
+
+This is a **fun, social, consumer digital-asset product**.
+
+Imagine:
+
+**CoinGecko + Robinhood-style simplicity + social network energy + modern gaming UX + Nigerian culture**
+
+But do NOT literally copy any existing company's interface, branding, illustrations, or layout.
+
+We want something original.
+
+The emotional reaction should be:
+
+> "Wait... this is actually really cool."
+
+Not:
+
+> "This looks like another boring financial dashboard."
+
+---
+
+# DESIGN PERSONALITY
+
+The UI should feel:
+
+* youthful
+* playful
+* energetic
+* modern
+* premium
+* expressive
+* slightly futuristic
+* highly visual
+* social
+* addictive to explore
+* extremely easy to understand
+* unmistakably consumer-focused
+
+It should feel like a product young Nigerians would WANT to open every day.
+
+Use personality.
+
+Use tasteful humor.
+
+Use playful microcopy.
+
+Use animations.
+
+Use responsive interactions.
+
+Use visual feedback.
+
+Use delightful transitions.
+
+But NEVER make it feel childish or cheap.
+
+The target feeling is:
+
+**"Fun money technology built by people who understand the internet."**
+
+Not:
+
+**"A children's crypto app."**
+
+---
+
+# VISUAL DIRECTION
+
+Build an exceptionally polished interface.
+
+Use:
+
+* strong typography
+* beautiful spacing
+* rounded cards where appropriate
+* expressive numbers
+* animated charts
+* large visual balances
+* dynamic market cards
+* beautiful gradients
+* subtle glow effects
+* playful icons
+* smooth transitions
+* animated buttons
+* interactive graphs
+* rich empty states
+* delightful success states
+* subtle haptics/interaction concepts
+* motion between pages
+
+The interface should feel alive.
+
+Avoid a wall of cards.
+
+Avoid excessive tables.
+
+Avoid enterprise-style dashboards.
+
+Avoid tiny text everywhere.
+
+Avoid making every element look like a spreadsheet.
+
+---
+
+# COLOR SYSTEM
+
+Create a distinctive visual identity.
+
+Do NOT default to generic:
+
+* banking blue
+* corporate navy
+* grayscale SaaS
+
+Use a bold modern palette with a strong signature color system.
+
+The interface can use:
+
+* energetic accent colors
+* dark mode
+* light mode
+* vibrant gradients
+* subtle neon/glow
+* high-contrast numbers
+* playful visual highlights
+
+But maintain excellent readability and accessibility.
+
+The product should still look premium.
+
+---
+
+# CORE NAVIGATION
+
+Design the prototype around approximately five primary areas:
+
+### HOME
+
+The user's personal command center.
+
+### MARKET
+
+Explore the asset and its ecosystem.
+
+### SEND
+
+Send the digital asset to another person.
+
+### ACTIVITY
+
+See transactions and network activity.
+
+### PROFILE
+
+Identity, settings, security and account.
+
+You may improve this structure if you discover a better consumer UX.
+
+---
+
+# HOME SCREEN
+
+The home screen should immediately answer:
+
+**How much do I have?**
+
+**What is it worth?**
+
+**Is the asset going up or down?**
+
+**What can I do right now?**
+
+Example structure:
+
+---
+
+### Good morning, [Name]
+
+A beautiful primary balance:
+
+**₦124,850**
+
+and underneath:
+
+**1,842.72 [ASSET]**
+
+Then:
+
+**+₦8,420 today**
+
+**+7.2%**
+
+Animated change indicator.
+
+---
+
+### Primary actions
+
+Large, obvious buttons:
+
+**Buy**
+
+**Sell**
+
+**Send**
+
+**Receive**
+
+These should feel effortless.
+
+---
+
+### Mini price chart
+
+Show:
+
+**[ASSET]**
+
+Current price
+
+24H change
+
+Interactive sparkline/chart.
+
+Allow:
+
+1H / 1D / 1W / 1M / 1Y / ALL
+
+---
+
+### Network pulse
+
+A fun section showing activity such as:
+
+**🔥 12,482 people are active right now**
+
+**⚡ 38,201 transfers today**
+
+**🌍 14 new communities joined this week**
+
+These can initially be prototype/demo numbers.
+
+Clearly label anything that is simulated.
+
+---
+
+### Social/network activity
+
+A playful feed:
+
+**Ada just received 250 [ASSET]**
+
+**Michael bought ₦10,000 worth**
+
+**Campus Creators community received 4,500 [ASSET]**
+
+**124 people joined your network today**
+
+Do NOT expose sensitive financial information of real users in production.
+
+For the prototype, use obviously fictional/demo identities.
+
+---
+
+# BUY EXPERIENCE
+
+Make buying incredibly simple.
+
+User taps:
+
+**BUY**
+
+Screen asks:
+
+### How much do you want?
+
+Big amount input:
+
+**₦10,000**
+
+Below:
+
+**You receive approximately 147.82 [ASSET]**
+
+Show:
+
+* current price
+* estimated received amount
+* applicable fee
+* final amount
+
+Then:
+
+**BUY [ASSET]**
+
+Use a beautiful confirmation animation.
+
+Example:
+
+**You're in 🎉**
+
+**+147.82 [ASSET]**
+
+Balance updates immediately.
+
+---
+
+# SELL EXPERIENCE
+
+Exactly the opposite.
+
+User enters:
+
+**250 [ASSET]**
+
+App shows:
+
+**≈ ₦16,870**
+
+Then:
+
+**SELL**
+
+Confirmation:
+
+**Sold successfully**
+
+**₦16,870 available**
+
+Make this extremely understandable.
+
+---
+
+# SEND EXPERIENCE
+
+This should be one of the best parts of the product.
+
+Tap:
+
+**SEND**
+
+Then:
+
+### Who are you sending to?
+
+Allow:
+
+* username
+* phone number
+* QR code
+* contact
+* wallet address only as an advanced option
+
+Do NOT force ordinary users to deal with crypto addresses.
+
+Example:
+
+**@Daniel**
+
+Profile avatar
+
+Then:
+
+### How much?
+
+**250 [ASSET]**
+
+Equivalent:
+
+**≈ ₦16,870**
+
+Then:
+
+**SEND**
+
+Confirmation animation:
+
+**Sent 🚀**
+
+**Daniel received 250 [ASSET]**
+
+This should feel as easy as sending a message.
+
+---
+
+# RECEIVE EXPERIENCE
+
+Large QR code.
+
+Username.
+
+Simple receive address.
+
+Example:
+
+**@yourname**
+
+Button:
+
+**Copy**
+
+Button:
+
+**Share**
+
+Button:
+
+**Request payment**
+
+Allow the user to create a payment request:
+
+**"Send me ₦5,000 worth"**
+
+with a shareable link.
+
+---
+
+# MARKET SCREEN
+
+This is where the **CoinGecko inspiration** should be strongest.
+
+CoinGecko provides users with real-time price data, charts, market capitalization, trending assets, categories, watchlists and portfolio functionality.
+
+But our interface should feel far more consumer-friendly and exciting.
+
+Create:
+
+## [ASSET] Market
+
+Large:
+
+**₦113.42**
+
+**+8.7% 24H**
+
+Beautiful interactive chart.
+
+Below:
+
+**Market Cap**
+
+**24H Volume**
+
+**Circulating Supply**
+
+**Holders**
+
+**Transactions**
+
+**Active Users**
+
+**Communities**
+
+But present these in visually interesting ways rather than a boring spreadsheet.
+
+---
+
+# MARKET ENERGY
+
+Create sections such as:
+
+### 🔥 Trending
+
+### 🚀 Biggest Movers
+
+### 👀 Most Watched
+
+### 🌍 Network Growth
+
+### ⚡ Most Active Communities
+
+### 🏆 Top Participants
+
+### 🆕 New Communities
+
+This is where the product begins feeling like a living ecosystem instead of a wallet.
+
+---
+
+# SOCIAL DISCOVERY
+
+This is extremely important.
+
+Introduce a lightweight social layer.
+
+Users can have:
+
+**@username**
+
+Profile picture/avatar
+
+Optional bio
+
+Optional public activity
+
+Optional achievements
+
+Optional communities
+
+Do NOT immediately build a full Twitter clone.
+
+The purpose of social is to strengthen the economic network.
+
+---
+
+# COMMUNITIES
+
+Allow users to discover communities.
+
+Examples:
+
+**University of Lagos**
+
+**Private University Students**
+
+**Tech Builders**
+
+**Memes Nigeria**
+
+**Football Community**
+
+**Creators**
+
+**Gaming**
+
+**Crypto**
+
+**Developers**
+
+Each community can have:
+
+* member count
+* activity
+* transactions
+* optional community balance
+* leaderboard
+* rewards
+* payment requests
+* announcements
+
+The UI should make communities feel alive.
+
+---
+
+# CAMPUS MODE
+
+For prototype purposes, make the product particularly strong for university communities.
+
+Create a demo campus experience.
+
+Example:
+
+## UNIVERSITY HUB
+
+**4,281 members**
+
+**₦18.4M network activity**
+
+**2,381 transfers today**
+
+Sections:
+
+**Students**
+
+**Communities**
+
+**Creators**
+
+**Merchants**
+
+**Events**
+
+**Trending**
+
+This makes it immediately obvious how the network could start locally and expand.
+
+---
+
+# REWARDS / ACHIEVEMENTS
+
+Introduce playful gamification carefully.
+
+Examples:
+
+### First Transfer
+
+🎉
+
+### First 10 Transfers
+
+⚡
+
+### First Referral
+
+🤝
+
+### Community Builder
+
+🌍
+
+### Early Member
+
+🏆
+
+### 100 Transactions
+
+💎
+
+Do NOT make rewards financially misleading.
+
+This is about engagement and network identity.
+
+---
+
+# REFERRALS
+
+Create an extremely simple referral experience.
+
+Example:
+
+### Bring your people.
+
+**Your network: 27 people**
+
+**Invite someone**
+
+Share:
+
+**yourname.app/invite/abc123**
+
+Show network growth visually.
+
+The product should encourage users to think:
+
+> "Who else should I bring into this?"
+
+That is important to the network-effect thesis.
+
+---
+
+# PROFILE
+
+Keep it fun and simple.
+
+Show:
+
+Profile
+
+Username
+
+Avatar
+
+Joined date
+
+Network level
+
+Achievements
+
+Communities
+
+Activity
+
+Security
+
+Settings
+
+Privacy
+
+---
+
+# SECURITY
+
+Even though the overall product is fun, security must feel serious underneath.
+
+Include:
+
+* passcode
+* biometric authentication concept
+* device management
+* transaction confirmation
+* suspicious login alerts
+* recovery flow
+* optional advanced wallet controls
+
+But do not turn security into intimidating technical language.
+
+Example:
+
+Instead of:
+
+**"Configure transaction signing policy"**
+
+say:
+
+**"Protect your money"**
+
+Then:
+
+**Face ID**
+
+**PIN**
+
+**Trusted devices**
+
+**Recovery**
+
+---
+
+# EDUCATION FOR NON-CRYPTO USERS
+
+Assume the user knows NOTHING about crypto.
+
+Never assume:
+
+"wallet"
+
+"gas"
+
+"blockchain"
+
+"seed phrase"
+
+"network"
+
+"chain"
+
+"token contract"
+
+are understandable.
+
+Explain only when necessary.
+
+Use simple language:
+
+**Your balance**
+
+**Your digital asset**
+
+**Send**
+
+**Receive**
+
+**Buy**
+
+**Sell**
+
+**Price**
+
+**Activity**
+
+If technical information is needed, put it under:
+
+**Advanced**
+
+---
+
+# PRICE EXPERIENCE
+
+The asset's price is going to be psychologically important.
+
+Build a beautiful price experience.
+
+Allow:
+
+**₦**
+
+**USD**
+
+and potentially other currencies.
+
+Show:
+
+**Current price**
+
+**24H change**
+
+**7D**
+
+**30D**
+
+**1Y**
+
+**All time**
+
+Interactive graph.
+
+Add playful context:
+
+**"You're up ₦4,200 this week."**
+
+or:
+
+**"The network is having a good day 🚀"**
+
+But NEVER create deceptive financial claims.
+
+---
+
+# PORTFOLIO
+
+Create a simple portfolio experience.
+
+Show:
+
+**Total balance**
+
+**Asset amount**
+
+**Average buy price**
+
+**Profit/Loss**
+
+**Best day**
+
+**Worst day**
+
+**Transaction history**
+
+A CoinGecko-style portfolio concept is useful here, but unlike CoinGecko—which is primarily a tracking/data platform and does not itself execute buys or sells—our conceptual product is intended to combine the portfolio experience with actual asset actions.
+
+---
+
+# ACTIVITY FEED
+
+Create a highly visual transaction history.
+
+Instead of boring rows only:
+
+**You sent**
+
+250 [ASSET]
+
+to **@Daniel**
+
+**2 min ago**
+
+Or:
+
+**You bought**
+
+₦10,000
+
+**+147.82 [ASSET]**
+
+Make transactions visually understandable in one glance.
+
+---
+
+# NETWORK EXPLORER
+
+This can become one of the most visually impressive screens.
+
+Create:
+
+## THE NETWORK
+
+Show:
+
+**Total users**
+
+**Active users**
+
+**Total transactions**
+
+**Value transferred**
+
+**Communities**
+
+**Merchants**
+
+**Growth**
+
+Visualize growth dynamically.
+
+Potentially show a beautiful animated network map where nodes represent communities/users and connections represent activity.
+
+For the prototype, simulated data is acceptable.
+
+---
+
+# LEADERBOARDS
+
+Create optional leaderboards.
+
+Examples:
+
+**Top Communities**
+
+**Top Referrers**
+
+**Most Active**
+
+**Community Builders**
+
+**Top Merchants**
+
+But NEVER turn this into a system that publicly exposes people's private balances.
+
+Focus on participation, not wealth.
+
+---
+
+# MERCHANT MODE
+
+Eventually, someone should be able to say:
+
+**"I accept [ASSET]."**
+
+Create a prototype merchant screen.
+
+Merchant sees:
+
+**Today's sales**
+
+**Payments**
+
+**Customers**
+
+**Balance**
+
+**Request payment**
+
+Generate:
+
+**QR payment**
+
+This demonstrates how the network could eventually move from person-to-person transfers into real-world usage.
+
+---
+
+# DESIGN THE APP AS A LIVING WORLD
+
+This is important.
+
+I don't want a collection of disconnected screens.
+
+I want the prototype to feel like one living digital ecosystem.
+
+The user should always feel:
+
+**"People are here."**
+
+**"Things are happening."**
+
+**"The network is growing."**
+
+**"I can participate."**
+
+The interface should continuously communicate activity, movement, culture and community.
+
+---
+
+# MICROINTERACTIONS
+
+Invest heavily in microinteractions.
+
+Examples:
+
+Buying:
+
+**coin particles / subtle celebration**
+
+Sending:
+
+**animated transfer path**
+
+Receiving:
+
+**beautiful incoming notification**
+
+Price increase:
+
+**subtle positive motion**
+
+Achievement:
+
+**animated badge**
+
+New community member:
+
+**small celebration**
+
+Successful payment:
+
+**satisfying confirmation**
+
+Do not overdo animations.
+
+Everything should feel fast.
+
+---
+
+# MOBILE FIRST
+
+This is extremely important.
+
+The primary user is a Nigerian young person using a smartphone.
+
+Design mobile-first.
+
+Then adapt to desktop.
+
+The mobile prototype should be excellent.
+
+Think:
+
+WhatsApp-level familiarity
+
+*
+
+TikTok-level visual energy
+
+*
+
+modern crypto-market information
+
+*
+
+premium fintech usability
+
+---
+
+# RESPONSIVE WEB APP
+
+Build a responsive web prototype that works beautifully on:
+
+* phone
+* tablet
+* laptop
+* desktop
+
+Desktop should become richer without simply stretching the mobile interface.
+
+---
+
+# DEMO DATA
+
+Populate the prototype with realistic fictional data.
+
+Example:
+
+Users:
+
+12,842
+
+Active today:
+
+4,291
+
+Price:
+
+₦127.42
+
+24H:
+
++8.31%
+
+Market cap:
+
+₦1.27B
+
+Transactions:
+
+183,421
+
+Communities:
+
+147
+
+Do not represent demo values as real-world facts.
+
+Clearly treat them as prototype/demo data in the code.
+
+---
+
+# IMPORTANT: DO NOT MAKE IT LOOK LIKE A CRYPTO TRADING TERMINAL
+
+This is one of the biggest design requirements.
+
+Do NOT create:
+
+* giant candlestick dashboards
+* overwhelming order books
+* technical trading interfaces
+* walls of numbers
+* Bloomberg-style interfaces
+* institutional finance aesthetics
+
+Advanced users can eventually get advanced tools.
+
+But the primary experience must be:
+
+**simple + fun + visual + social + obvious.**
+
+---
+
+# LANDING PAGE
+
+Create a stunning public landing page.
+
+Headline should communicate the concept immediately.
+
+Something along the lines of:
+
+**A digital asset for everyone.**
+
+or:
+
+**Money made social.**
+
+or:
+
+**Own it. Send it. Be part of it.**
+
+Do not finalize these blindly.
+
+Generate several strong directions and choose the strongest one.
+
+---
+
+# LANDING PAGE SECTIONS
+
+### HERO
+
+Big visual.
+
+Animated representation of people sending value between one another.
+
+Show:
+
+**Buy**
+
+→
+
+**Send**
+
+→
+
+**Receive**
+
+→
+
+**Use**
+
+---
+
+### LIVE NETWORK
+
+Show dynamic numbers:
+
+**People online**
+
+**Transactions**
+
+**Communities**
+
+**Network activity**
+
+---
+
+### HOW IT WORKS
+
+Three or four extremely simple steps:
+
+**1. Get it**
+
+**2. Hold it**
+
+**3. Send it**
+
+**4. Use it**
+
+---
+
+### DISCOVER THE NETWORK
+
+Show communities.
+
+Campus.
+
+Creators.
+
+Businesses.
+
+Friends.
+
+---
+
+### WHY PEOPLE ARE HERE
+
+Use short, human language.
+
+No corporate mission statement.
+
+---
+
+### CTA
+
+**Join the network**
+
+Keep the action extremely obvious.
+
+---
+
+# MOBILE UX DETAILS
+
+Use:
+
+* bottom navigation
+* large touch targets
+* thumb-friendly controls
+* floating actions where useful
+* swipe gestures where useful
+* sheets/modals instead of complicated navigation
+* instant feedback
+* skeleton loading
+* smooth state transitions
+
+---
+
+# EMPTY STATES
+
+Never show:
+
+**"No data."**
+
+Make them expressive.
+
+Example:
+
+**Your wallet is looking lonely 😭**
+
+**Buy your first [ASSET] to get started.**
+
+Button:
+
+**Buy [ASSET]**
+
+---
+
+# ERROR STATES
+
+Keep them human.
+
+Instead of:
+
+**Transaction failed: Error 40321**
+
+Use:
+
+**That didn't go through 😬**
+
+**Check your connection and try again.**
+
+Then show technical detail only under:
+
+**Details**
+
+---
+
+# BRAND PERSONALITY
+
+The brand should feel:
+
+**confident**
+
+**young**
+
+**internet-native**
+
+**Nigerian**
+
+**global**
+
+**optimistic**
+
+**slightly cheeky**
+
+but never:
+
+**corporate**
+
+**stiff**
+
+**pretentious**
+
+**overly technical**
+
+**scammy**
+
+Avoid excessive crypto clichés such as:
+
+"LFG"
+
+"TO THE MOON"
+
+"100X"
+
+"DIAMOND HANDS"
+
+The product should have its OWN personality.
+
+---
+
+# NIGERIAN CULTURE
+
+Use Nigerian cultural understanding tastefully.
+
+The design can incorporate subtle references to:
+
+* internet culture
+* campus culture
+* Nigerian humor
+* local language expressions where appropriate
+* familiar social behaviors
+* community culture
+
+But DO NOT turn the product into a stereotypical "African fintech" visual.
+
+It should look like something that could eventually become globally recognized.
+
+**Nigeria-first, world-class.**
+
+---
+
+# EXTREME CLARITY
+
+A completely non-technical person should understand the app within 30 seconds.
+
+They should understand:
+
+**What it is**
+
+**How much they have**
+
+**What the asset is worth**
+
+**How to buy**
+
+**How to sell**
+
+**How to send**
+
+**How to receive**
+
+**Why other people are using it**
+
+without needing documentation.
+
+---
+
+# PROTOTYPE FUNCTIONALITY
+
+This is a high-fidelity prototype.
+
+Implement simulated interactions wherever real backend integration is unavailable.
+
+Required working flows:
+
+### Flow 1
+
+Landing page → Sign up → Home
+
+### Flow 2
+
+Home → Buy → Confirm → Updated balance
+
+### Flow 3
+
+Home → Send → Select person → Amount → Confirm → Success
+
+### Flow 4
+
+Home → Receive → QR/share screen
+
+### Flow 5
+
+Home → Sell → Confirm → Updated balance
+
+### Flow 6
+
+Home → Market → Asset detail → Chart
+
+### Flow 7
+
+Home → Communities → Community detail
+
+### Flow 8
+
+Home → Profile → Achievements
+
+### Flow 9
+
+Home → Activity → Transaction detail
+
+### Flow 10
+
+Home → Network → Network statistics
+
+Every important interaction should feel real even if the data is mocked.
+
+---
+
+# DEMO MODE
+
+Add a prototype/demo mode.
+
+A new user should be able to explore the product immediately.
+
+Use fictional demo accounts such as:
+
+@Daniel
+
+@Amaka
+
+@Tunde
+
+@Zainab
+
+@TechBro
+
+@CampusKing
+
+Use fictional balances and transaction data.
+
+Make the prototype visually populated.
+
+A blank prototype is unacceptable.
+
+---
+
+# DESIGN QUALITY BAR
+
+The output should feel closer to a **funded consumer startup preparing for a major launch** than a developer demo.
+
+Do not settle for:
+
+* generic Tailwind dashboard components
+* default cards
+* default gradients
+* generic crypto templates
+* excessive glassmorphism
+* boring navigation
+* placeholder icons
+* lorem ipsum
+* static screenshots pretending to be interaction
+
+Create a cohesive design system.
+
+Create reusable components.
+
+Use consistent spacing.
+
+Use consistent typography.
+
+Use purposeful motion.
+
+Make every screen feel intentional.
+
+---
+
+# MOST IMPORTANT PRODUCT PRINCIPLE
+
+The product should communicate this idea visually:
+
+> **This isn't just a coin sitting in a wallet. This is a growing network of people.**
+
+The user should constantly see signs that other people are participating.
+
+That's what differentiates this product from a generic crypto wallet.
+
+---
+
+# DO NOT OVERBUILD THE BLOCKCHAIN
+
+This is a prototype.
+
+The purpose is to validate the consumer product and network concept.
+
+Do NOT waste time building:
+
+* a new Layer 1
+* validators
+* consensus
+* complex bridges
+* complicated DeFi
+* institutional APIs
+* advanced trading infrastructure
+
+Use mock/simulated blockchain interactions where appropriate.
+
+The prototype is about:
+
+**UX + product + network behavior + consumer psychology.**
+
+---
+
+# FINAL OUTPUT
+
+Produce:
+
+1. Public landing page
+2. Sign-up/onboarding
+3. Home dashboard
+4. Buy flow
+5. Sell flow
+6. Send flow
+7. Receive flow
+8. Market page
+9. Asset detail page
+10. Interactive chart
+11. Portfolio
+12. Activity
+13. Communities
+14. Campus/community hub
+15. Network explorer
+16. Leaderboards
+17. Merchant payment demo
+18. Profile
+19. Security/settings
+20. Responsive mobile version
+21. Responsive desktop version
+
+Everything should share the same visual language.
+
+---
+
+# FINAL DESIGN TEST
+
+Before considering the prototype complete, ask:
+
+### Could a Nigerian university student understand this without knowing crypto?
+
+### Would they actually want to show the app to their friend?
+
+### Does it feel fun enough to open repeatedly?
+
+### Does the interface communicate that thousands/millions of people could participate?
+
+### Does it feel premium enough to become a major consumer brand?
+
+### Does it feel Nigerian without looking small or local?
+
+### Does it feel like a financial product without feeling boring?
+
+### Can someone understand BUY / SELL / SEND / RECEIVE immediately?
+
+### Does the product make the concept of a "network" obvious?
+
+### Does it look dramatically better than a generic crypto wallet?
+
+If the answer to any of these is no, continue refining.
+
+---
+
+# ONE FINAL DIRECTIVE
+
+Do not build what you think a blockchain developer would normally build.
+
+Build what a **19-year-old Nigerian who has never used crypto before would absolutely understand and enjoy using.**
+
+The technology is underneath.
+
+**The network is the product.**
+
+**The asset is the economic layer.**
+
+**The user experience is the weapon.**
+
+Make it feel like something that could start on one Nigerian university campus and eventually become a global consumer network.

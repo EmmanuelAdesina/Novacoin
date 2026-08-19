@@ -10,11 +10,11 @@ import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionV
 const PAGE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://novacoin.zevcloud.app';
 const COLORS = { terra: '#C9503E', sand: '#D4A574', sage: '#7C9082', lavender: '#9B8EC4', gold: '#C4A35A' };
 const USERS = [
-  { name: 'Amaka', color: '#9B8EC4', init: 'A' },
-  { name: 'Daniel', color: '#7C9082', init: 'D' },
-  { name: 'Tobi', color: '#C9503E', init: 'T' },
-  { name: 'Zainab', color: '#C4A35A', init: 'Z' },
-  { name: 'Chidi', color: '#D4A574', init: 'C' },
+  { name: 'Aisha', color: '#9B8EC4', init: 'A' },
+  { name: 'Yusuf', color: '#7C9082', init: 'Y' },
+  { name: 'Omar', color: '#C9503E', init: 'O' },
+  { name: 'Fatima', color: '#C4A35A', init: 'F' },
+  { name: 'Ibrahim', color: '#D4A574', init: 'I' },
 ];
 
 const ease = [0.22, 1, 0.36, 1];
@@ -329,7 +329,7 @@ function TryItDemo() {
                     <input
                       type="text" value={sendingName}
                       onChange={(e) => setSendingName(e.target.value)}
-                      placeholder="Daniel" autoFocus
+                      placeholder="Yusuf" autoFocus
                       className="w-full bg-[#FFF9F5] rounded-xl border-2 border-[#2D1F14]/[0.06] pl-8 pr-4 py-3 text-sm font-semibold text-[#2D1F14] placeholder:text-[#8B7D6B]/40 focus:outline-none focus:border-[#9B8EC4]/30 focus:ring-2 focus:ring-[#9B8EC4]/10 transition-all"
                     />
                   </div>
@@ -756,7 +756,7 @@ export default function Page() {
               <div className="bg-white rounded-2xl p-5 border border-[#2D1F14]/[0.04] shadow-[0_2px_16px_rgba(45,31,20,0.05)]">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#9B8EC4] to-[#7C6FAF] flex items-center justify-center text-white text-[9px] font-bold">A</div>
-                  <span className="text-[11px] font-semibold text-[#2D1F14]">Amaka</span>
+                  <span className="text-[11px] font-semibold text-[#2D1F14]">Aisha</span>
                 </div>
                 <div className="bg-[#9B8EC4]/[0.08] rounded-2xl rounded-tl-md px-4 py-3">
                   <p className="text-sm text-[#2D1F14]/80">Hey! Thanks for the data 💜</p>
@@ -767,7 +767,7 @@ export default function Page() {
               <div className="bg-white rounded-2xl p-5 border border-[#C9503E]/[0.12] shadow-[0_2px_16px_rgba(45,31,20,0.05)]">
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C9503E] to-[#D4A574] flex items-center justify-center text-white text-[9px] font-bold">A</div>
-                  <span className="text-[11px] font-semibold text-[#2D1F14]">Amaka</span>
+                  <span className="text-[11px] font-semibold text-[#2D1F14]">Aisha</span>
                 </div>
                 <div className="bg-[#C9503E]/[0.06] rounded-2xl rounded-tl-md px-4 py-3">
                   <p className="text-sm font-semibold text-[#2D1F14]">Sent you 1 NovaCoin ✨</p>
