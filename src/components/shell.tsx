@@ -3,62 +3,90 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { COPY } from "@/lib/format";
-import { NotificationBell } from "@/components/widgets";
-import { Avatar, Mark, cn } from "@/components/ui";
+import { DEMO_NOTE, cn } from "@/lib/format";
 
-const NAV = [
-  { href: "/", label: "Now" },
-  { href: "/explore", label: "Explore" },
-  { href: "/calls", label: "Calls" },
-  { href: "/compete", label: "Compete" },
-  { href: "/board", label: "Board" },
-  { href: "/desk", label: "Desk" },
-  { href: "/passes", label: "Passes" },
-  { href: "/u/you", label: "You" },
-];
-
-const MOBILE = [
-  { href: "/", label: "Now" },
-  { href: "/calls", label: "Calls" },
-  { href: "/compete", label: "Compete" },
-  { href: "/board", label: "Board" },
-  { href: "/u/you", label: "You" },
-];
+export const NAV = [
+  { href: "/markets", label: "Markets", icon: "markets" },
+  { href: "/feed", label: "Feed", icon: "feed" },
+  { href: "/leaderboard", label: "Leaderboard", icon: "leaderboard" },
+  { href: "/portfolio", label: "Portfolio", icon: "portfolio" },
+  { href: "/profile", label: "Profile", icon: "profile" },
+] as const;
 
 function active(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  if (href === "/u/you") return pathname === "/u/you";
+  if (href === "/profile") return pathname === "/profile" || pathname.startsWith("/u/");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function Shell({
-  children,
-  you,
-  purseLabel,
-  notes,
-}: {
-  children: ReactNode;
-  you: { displayName: string; initials: string; hue: string; city: string };
-  purseLabel: string;
-  notes: Array<{ id: number; title: string; body: string; href: string | null; read: boolean; when: string }>;
-}) {
+export function Icon({ name, className }: { name: string; className?: string }) {
+  const common = {
+    width: 22,
+    height: 22,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className,
+    "aria-hidden": true,
+  };
+  switch (name) {
+    case "markets":
+      return (
+        <svg {...common}>
+          <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
+        </svg>
+      );
+    case "feed":
+      return (
+        <svg {...common}>
+          <path d="M3 6h18M3 12h18M3 18h11" />
+        </svg>
+      );
+    case "leaderboard":
+      return (
+        <svg {...common}>
+          <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+          <path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3" />
+        </svg>
+      );
+    case "portfolio":
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="14" rx="3" />
+          <path d="M3 10h18M16 15h2" />
+          <path d="M7 6V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1" />
+        </svg>
+      );
+    case "profile":
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+export function Shell({ children, balanceLabel }: { children: ReactNode; balanceLabel: string }) {
   const pathname = usePathname();
   return (
-    <div className="min-h-screen bg-sand text-ink">
-      <a href="#content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:bg-paper focus:px-3 focus:py-2">
+    <div className="min-h-screen">
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg"
+      >
         Skip to content
       </a>
-      <div className="lg:grid lg:grid-cols-[232px_minmax(0,1fr)]">
-        <aside className="sticky top-0 hidden h-screen flex-col bg-night text-[#f3eee6] lg:flex">
-          <div className="px-5 pt-6">
-            <Link href="/" aria-label="Sabi home">
-              <Mark light />
-            </Link>
-            <p className="mt-3 text-xs leading-5 text-[#cfc6ba]">See it. Call it. Keep the record.</p>
-            <p className="mt-4 text-[11px] uppercase tracking-[0.16em] text-[#e7d3a8]">Circuit 01 · ₦</p>
-          </div>
-          <nav className="mt-8 flex flex-1 flex-col px-3" aria-label="Primary">
+
+      {/* Desktop header */}
+      <header className="sticky top-0 z-40 hidden border-b border-line bg-bg/85 backdrop-blur md:block">
+        <div className="mx-auto flex h-16 max-w-[1200px] items-center gap-8 px-8">
+          <Logo />
+          <nav className="flex items-center gap-1" aria-label="Primary">
             {NAV.map((item) => {
               const on = active(pathname, item.href);
               return (
@@ -67,8 +95,8 @@ export function Shell({
                   href={item.href}
                   aria-current={on ? "page" : undefined}
                   className={cn(
-                    "px-3 py-2.5 text-sm",
-                    on ? "bg-[#f3eee6] text-night" : "text-[#e7e1d8] hover:bg-white/5",
+                    "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                    on ? "bg-ink text-bg" : "text-muted hover:text-ink",
                   )}
                 >
                   {item.label}
@@ -76,78 +104,81 @@ export function Shell({
               );
             })}
           </nav>
-          <div className="border-t border-white/10 px-5 py-4 text-xs leading-5 text-[#cfc6ba]">
-            <p>Demo seat · {you.city}</p>
-            <p className="mt-1 text-[#e7d3a8]">{purseLabel}</p>
-          </div>
-        </aside>
-        <div className="min-w-0">
-          <div className="sticky top-0 z-30 border-b border-line bg-sand">
-            <p className="bg-forest px-4 py-2 text-center text-[12px] leading-5 text-[#f6f1e7]">{COPY.banner}</p>
-            <div className="flex items-center gap-3 px-4 py-3 md:px-8">
-              <Link href="/" className="lg:hidden" aria-label="Sabi home">
-                <Mark compact />
-              </Link>
-              <form action="/explore" className="hidden min-w-0 flex-1 md:block">
-                <label className="sr-only" htmlFor="q">
-                  Search the circuit
-                </label>
-                <input
-                  id="q"
-                  name="q"
-                  placeholder="Search calls, rooms, people"
-                  className="w-full max-w-md bg-paper px-3 py-2 text-sm"
-                />
-              </form>
-              <div className="ml-auto flex items-center gap-2">
-                <Link href="/explore" className="text-sm md:hidden">
-                  Search
-                </Link>
-                <NotificationBell notes={notes} />
-                <Link href="/desk" className="max-w-[7.5rem] truncate text-xs num sm:max-w-none sm:text-sm">
-                  {purseLabel}
-                </Link>
-                <Link href="/u/you" aria-label="Your record">
-                  <Avatar initials={you.initials} hue={you.hue} size={34} />
-                </Link>
-              </div>
-            </div>
-            <div className="flex gap-4 overflow-x-auto border-t border-line px-4 py-2 text-sm lg:hidden">
-              {NAV.filter((item) => !["/", "/calls", "/compete", "/board", "/u/you"].includes(item.href)).map((item) => (
-                <Link key={item.href} href={item.href} className="shrink-0 text-muted">
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <main id="content" className="mx-auto w-full max-w-[1120px] px-4 py-6 pb-28 md:px-8 lg:pb-16">
-            {children}
-          </main>
-          <footer className="mx-auto w-full max-w-[1120px] px-4 pb-28 text-xs leading-5 text-muted md:px-8 lg:pb-10">
-            <p>
-              Sabi, pronounced sah-bee, means to know. Built first for Nigeria. The circuit is designed to travel, not to
-              become a foreign-exchange product.
-            </p>
-            <p className="mt-2">{COPY.affiliation}</p>
-            <p className="mt-2">{COPY.adult} This preview shares one demonstration seat.</p>
-          </footer>
-        </div>
-      </div>
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-paper lg:hidden" aria-label="Mobile">
-        {MOBILE.map((item) => {
-          const on = active(pathname, item.href);
-          return (
+          <div className="ml-auto flex items-center gap-3">
             <Link
-              key={item.href}
-              href={item.href}
-              aria-current={on ? "page" : undefined}
-              className={cn("px-1 py-3 text-center text-[11px] uppercase tracking-[0.12em]", on ? "text-forest" : "text-muted")}
+              href="/portfolio"
+              className="flex items-center gap-2 rounded-full border border-line bg-panel px-4 py-2 text-sm"
+              aria-label="Demo balance"
             >
-              {item.label}
+              <span className="text-muted">Demo balance</span>
+              <span className="num font-semibold">{balanceLabel}</span>
             </Link>
-          );
-        })}
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile top bar */}
+      <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur md:hidden">
+        <div className="flex h-14 items-center justify-between px-5">
+          <Logo />
+          <Link
+            href="/portfolio"
+            className="flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1.5 text-xs"
+            aria-label="Demo balance"
+          >
+            <span className="text-muted">Demo</span>
+            <span className="num font-semibold">{balanceLabel}</span>
+          </Link>
+        </div>
+      </header>
+
+      <main id="content" className="mx-auto w-full max-w-[1200px] px-5 pb-32 pt-6 md:px-8 md:pb-20 md:pt-10">
+        {children}
+      </main>
+
+      <footer className="mx-auto hidden w-full max-w-[1200px] px-8 pb-12 text-xs leading-5 text-faint md:block">
+        <p>{DEMO_NOTE}</p>
+      </footer>
+
+      {/* Mobile tab bar: the five main areas, always one tap away. */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        aria-label="Primary mobile"
+      >
+        <div className="mx-auto grid max-w-md grid-cols-5">
+          {NAV.map((item) => {
+            const on = active(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={on ? "page" : undefined}
+                className={cn(
+                  "flex flex-col items-center gap-1 px-1 py-2.5 text-[11px] font-medium",
+                  on ? "text-brand" : "text-muted",
+                )}
+              >
+                <Icon name={item.icon} />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
     </div>
+  );
+}
+
+export function Logo() {
+  return (
+    <Link href="/" className="inline-flex items-center gap-2" aria-label="Sabi home">
+      <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand text-bg">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
+          <path d="M5 16c2.2-4.4 4.6-6.4 7-6.4s4.8 2 7 6.4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+          <circle cx="12" cy="8.2" r="2" fill="currentColor" />
+        </svg>
+      </span>
+      <span className="text-[1.25rem] font-semibold tracking-[-0.03em]">Sabi</span>
+    </Link>
   );
 }
