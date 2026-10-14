@@ -1,48 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-outfit), "Segoe UI", "Noto Sans", sans-serif;
-  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --color-sand: #f3eee6;
-  --color-paper: #fbf8f3;
-  --color-ink: #1c1915;
-  --color-muted: #5e564c;
-  --color-faint: #8a8176;
-  --color-line: #e3d9cc;
-  --color-forest: #1b4636;
-  --color-leaf: #2c6a4c;
-  --color-clay: #b84e24;
-  --color-clay-ink: #8a3918;
-  --color-gold: #8d6b2f;
-  --color-gold-soft: #e7d3a8;
-  --color-rose: #8d3a34;
-  --color-sea: #23415f;
-  --color-mist: #efe7db;
-  --color-night: #141210;
+  --font-sans: "Outfit Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --color-bg: #0a0b0e;
+  --color-panel: #12141a;
+  --color-panel-2: #181b23;
+  --color-line: #242833;
+  --color-line-2: #303544;
+  --color-ink: #f5f6f8;
+  --color-muted: #9aa1ae;
+  --color-faint: #666e7d;
+  --color-yes: #2fd47f;
+  --color-no: #ff5d6c;
+  --color-gold: #f5c451;
+  --color-brand: #c8f169;
 }
 
 html {
-  color-scheme: light;
-  background: #f3eee6;
+  color-scheme: dark;
+  background: #0a0b0e;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 0% -10%, rgba(184, 78, 36, 0.06), transparent 42%),
-    radial-gradient(ellipse at 100% 0%, rgba(27, 70, 54, 0.05), transparent 36%),
-    #f3eee6;
-  color: #1c1915;
+  background: #0a0b0e;
+  color: #f5f6f8;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: #e7d3a8;
-  color: #1c1915;
+  background: #c8f169;
+  color: #0a0b0e;
 }
 
 :focus-visible {
-  outline: 2px solid #1b4636;
+  outline: 2px solid #c8f169;
   outline-offset: 2px;
 }
 
@@ -51,18 +44,25 @@ textarea,
 select {
   font: inherit;
   color: inherit;
-  background: #fffdf9;
-  border: 1px solid #e3d9cc;
-  border-radius: 0;
+  background: #0f1116;
+  border: 1px solid #303544;
+  border-radius: 14px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #c8f169;
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #8a8176;
+  color: #666e7d;
 }
 
 summary {
   list-style: none;
+  cursor: pointer;
 }
 
 summary::-webkit-details-marker {
@@ -73,20 +73,18 @@ summary::-webkit-details-marker {
   font-variant-numeric: tabular-nums;
 }
 
-.clock-row {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
+/* Subtle hero glow used on the home page and market headers. */
+.glow {
+  background:
+    radial-gradient(60% 70% at 85% 0%, rgba(200, 241, 105, 0.16), transparent 60%),
+    radial-gradient(50% 60% at 0% 100%, rgba(47, 212, 127, 0.10), transparent 60%),
+    #12141a;
 }
 
-.clock-row > * {
-  scroll-snap-align: start;
+.no-scrollbar {
+  scrollbar-width: none;
 }
 
-#call,
-#discussion,
-#seat {
-  scroll-margin-top: 7.5rem;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
