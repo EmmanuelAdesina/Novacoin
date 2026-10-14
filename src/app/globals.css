@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-outfit), "Segoe UI", "Noto Sans", sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --color-sand: #f3eee6;
+  --color-paper: #fbf8f3;
+  --color-ink: #1c1915;
+  --color-muted: #5e564c;
+  --color-faint: #8a8176;
+  --color-line: #e3d9cc;
+  --color-forest: #1b4636;
+  --color-leaf: #2c6a4c;
+  --color-clay: #b84e24;
+  --color-clay-ink: #8a3918;
+  --color-gold: #8d6b2f;
+  --color-gold-soft: #e7d3a8;
+  --color-rose: #8d3a34;
+  --color-sea: #23415f;
+  --color-mist: #efe7db;
+  --color-night: #141210;
+}
+
+html {
+  color-scheme: light;
+  background: #f3eee6;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 0% -10%, rgba(184, 78, 36, 0.06), transparent 42%),
+    radial-gradient(ellipse at 100% 0%, rgba(27, 70, 54, 0.05), transparent 36%),
+    #f3eee6;
+  color: #1c1915;
+}
+
+::selection {
+  background: #e7d3a8;
+  color: #1c1915;
+}
+
+:focus-visible {
+  outline: 2px solid #1b4636;
+  outline-offset: 2px;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: #fffdf9;
+  border: 1px solid #e3d9cc;
+  border-radius: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8a8176;
+}
+
+summary {
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-row {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.clock-row > * {
+  scroll-snap-align: start;
+}
+
+#call,
+#discussion,
+#seat {
+  scroll-margin-top: 7.5rem;
+}
