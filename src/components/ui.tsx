@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { cn, formatChance, formatCents } from "@/lib/format";
+import { chanceMeaning, cn, formatChance } from "@/lib/format";
 
 export { cn };
 
@@ -29,7 +29,7 @@ export function Eyebrow({ children, className }: { children: ReactNode; classNam
 
 export function DemoTag({ children = "Demo" }: { children?: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-gold">
+    <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-gold">
       {children}
     </span>
   );
@@ -37,27 +37,27 @@ export function DemoTag({ children = "Demo" }: { children?: ReactNode }) {
 
 export function StatusTag({ status }: { status: "open" | "closed" | "settled" | "won" | "lost" }) {
   const map = {
-    open: { label: "Open", cls: "bg-yes/12 text-yes" },
-    closed: { label: "Closed", cls: "bg-line text-muted" },
-    settled: { label: "Settled", cls: "bg-line text-ink" },
-    won: { label: "Won", cls: "bg-yes/15 text-yes" },
-    lost: { label: "Lost", cls: "bg-no/15 text-no" },
+    open: { label: "Still open", cls: "bg-yes/12 text-yes" },
+    closed: { label: "Don close", cls: "bg-line text-muted" },
+    settled: { label: "Result out", cls: "bg-line text-ink" },
+    won: { label: "You win! 🎉", cls: "bg-yes/15 text-yes" },
+    lost: { label: "You lose", cls: "bg-no/15 text-no" },
   } as const;
   const item = map[status];
   return <span className={cn("rounded-full px-2.5 py-1 text-[11px] font-semibold", item.cls)}>{item.label}</span>;
 }
 
-// A single horizontal probability bar. The fill is the chance of that outcome.
-export function ChanceBar({ bps, tone = "ink" }: { bps: number; tone?: "yes" | "no" | "ink" }) {
+// Simple probability bar
+export function ChanceBar({ bps, tone = "brand" }: { bps: number; tone?: "yes" | "no" | "brand" }) {
   const fill = tone === "yes" ? "bg-yes" : tone === "no" ? "bg-no" : "bg-brand";
   return (
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-line" aria-hidden>
+    <div className="h-2 w-full overflow-hidden rounded-full bg-line" aria-hidden>
       <div className={cn("h-full rounded-full", fill)} style={{ width: `${Math.max(2, Math.min(100, bps / 100))}%` }} />
     </div>
   );
 }
 
-// Yes/No pair used on market cards: the price is the chance.
+// Yes/No prediction boxes - CLEAR and SIMPLE for Nigerians
 export function BinaryChances({
   yes,
   no,
@@ -68,21 +68,47 @@ export function BinaryChances({
   size?: "md" | "lg";
 }) {
   const big = size === "lg";
+  const yesPct = Math.round(yes.priceBps / 100);
+  const noPct = Math.round(no.priceBps / 100);
   return (
     <div className="grid grid-cols-2 gap-3">
-      <div className="rounded-2xl bg-yes/10 px-4 py-3 text-yes">
-        <p className={cn("font-medium", big ? "text-sm" : "text-xs")}>{yes.label}</p>
-        <p className={cn("num font-semibold leading-none tracking-[-0.03em]", big ? "mt-2 text-5xl" : "mt-1.5 text-2xl")}>
-          {formatChance(yes.priceBps)}
+      <div className="rounded-2xl bg-yes/10 px-4 py-4 text-yes">
+        <p className={cn("font-semibold", big ? "text-base" : "text-sm")}>{yes.label}</p>
+        <p className={cn("num font-bold leading-none tracking-[-0.03em]", big ? "mt-2 text-5xl" : "mt-1.5 text-3xl")}>
+          {yesPct}%
         </p>
-        <p className="num mt-1 text-xs opacity-70">{formatCents(yes.priceBps)} to win</p>
+        <p className="mt-1 text-xs opacity-80">{chanceMeaning(yes.priceBps)}</p>
+        <p className="num mt-1 text-xs opacity-70">For ₦1k bet → ₦{Math.round(1000 * 100 / yesPct).toLocaleString()} back if yes</p>
       </div>
-      <div className="rounded-2xl bg-no/10 px-4 py-3 text-no">
-        <p className={cn("font-medium", big ? "text-sm" : "text-xs")}>{no.label}</p>
-        <p className={cn("num font-semibold leading-none tracking-[-0.03em]", big ? "mt-2 text-5xl" : "mt-1.5 text-2xl")}>
-          {formatChance(no.priceBps)}
+      <div className="rounded-2xl bg-no/10 px-4 py-4 text-no">
+        <p className={cn("font-semibold", big ? "text-base" : "text-sm")}>{no.label}</p>
+        <p className={cn("num font-bold leading-none tracking-[-0.03em]", big ? "mt-2 text-5xl" : "mt-1.5 text-3xl")}>
+          {noPct}%
         </p>
-        <p className="num mt-1 text-xs opacity-70">{formatCents(no.priceBps)} to win</p>
+        <p className="mt-1 text-xs opacity-80">{chanceMeaning(no.priceBps)}</p>
+        <p className="num mt-1 text-xs opacity-70">For ₦1k bet → ₦{Math.round(1000 * 100 / noPct).toLocaleString()} back if no</p>
+      </div>
+    </div>
+  );
+}
+
+// Multi-option chances (like who wins BBNaija)
+export function MultiChance({ outcome, showPayoutExample = true }: { outcome: { label: string; priceBps: number }; showPayoutExample?: boolean }) {
+  const pct = Math.round(outcome.priceBps / 100);
+  return (
+    <div>
+      <div className="flex items-baseline justify-between">
+        <span className="text-base font-semibold">{outcome.label}</span>
+        <span className="num text-xl font-bold">{pct}%</span>
+      </div>
+      <div className="mt-1">
+        <ChanceBar bps={outcome.priceBps} />
+      </div>
+      <div className="mt-1 flex items-center justify-between text-xs text-muted">
+        <span>{chanceMeaning(outcome.priceBps)}</span>
+        {showPayoutExample && (
+          <span className="num">₦1k bet → ₦{Math.round(1000 * 100 / pct).toLocaleString()} back</span>
+        )}
       </div>
     </div>
   );
@@ -110,7 +136,6 @@ export function Success({ children }: { children: ReactNode }) {
   return <p className="rounded-2xl bg-yes/10 px-4 py-3 text-sm leading-6 text-yes">{children}</p>;
 }
 
-// Segmented control that switches between views using links, so it works without JavaScript.
 export function Segmented({
   items,
 }: {
@@ -133,6 +158,21 @@ export function Segmented({
           {item.label}
         </Link>
       ))}
+    </div>
+  );
+}
+
+// Simple explainer box that tells people how this works
+export function HowItWorksBox() {
+  return (
+    <div className="rounded-2xl bg-brand/8 border border-brand/20 px-5 py-4">
+      <p className="text-sm font-semibold text-brand">How this thing work?</p>
+      <ol className="mt-2 space-y-1 text-sm text-muted leading-6">
+        <li>1. The percentage shows what people think go happen.</li>
+        <li>2. If something get 60%, that means most people think am go happen.</li>
+        <li>3. Put your demo money on wetin you believe. If you right, you win more money.</li>
+        <li>4. <strong>NO REAL MONEY.</strong> Na just practice for students.</li>
+      </ol>
     </div>
   );
 }

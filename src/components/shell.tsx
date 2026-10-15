@@ -7,9 +7,9 @@ import { DEMO_NOTE, cn } from "@/lib/format";
 
 export const NAV = [
   { href: "/markets", label: "Markets", icon: "markets" },
-  { href: "/feed", label: "Feed", icon: "feed" },
-  { href: "/leaderboard", label: "Leaderboard", icon: "leaderboard" },
-  { href: "/portfolio", label: "Portfolio", icon: "portfolio" },
+  { href: "/feed", label: "Activity", icon: "feed" },
+  { href: "/leaderboard", label: "Rankings", icon: "leaderboard" },
+  { href: "/portfolio", label: "My Bets", icon: "portfolio" },
   { href: "/profile", label: "Profile", icon: "profile" },
 ] as const;
 
@@ -108,10 +108,10 @@ export function Shell({ children, balanceLabel }: { children: ReactNode; balance
             <Link
               href="/portfolio"
               className="flex items-center gap-2 rounded-full border border-line bg-panel px-4 py-2 text-sm"
-              aria-label="Demo balance"
+              aria-label="Demo money"
             >
-              <span className="text-muted">Demo balance</span>
-              <span className="num font-semibold">{balanceLabel}</span>
+              <span className="text-muted">💰 Demo:</span>
+              <span className="num font-bold">{balanceLabel}</span>
             </Link>
           </div>
         </div>
@@ -124,10 +124,10 @@ export function Shell({ children, balanceLabel }: { children: ReactNode; balance
           <Link
             href="/portfolio"
             className="flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1.5 text-xs"
-            aria-label="Demo balance"
+            aria-label="Demo money"
           >
-            <span className="text-muted">Demo</span>
-            <span className="num font-semibold">{balanceLabel}</span>
+            <span className="text-muted">💰</span>
+            <span className="num font-bold">{balanceLabel}</span>
           </Link>
         </div>
       </header>
@@ -138,9 +138,10 @@ export function Shell({ children, balanceLabel }: { children: ReactNode; balance
 
       <footer className="mx-auto hidden w-full max-w-[1200px] px-8 pb-12 text-xs leading-5 text-faint md:block">
         <p>{DEMO_NOTE}</p>
+        <p className="mt-1">Built for Nigerian students — run with just <code className="bg-panel px-1 rounded">npm run dev</code>, no database needed.</p>
       </footer>
 
-      {/* Mobile tab bar: the five main areas, always one tap away. */}
+      {/* Mobile bottom nav */}
       <nav
         className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
         aria-label="Primary mobile"
@@ -172,13 +173,10 @@ export function Shell({ children, balanceLabel }: { children: ReactNode; balance
 export function Logo() {
   return (
     <Link href="/" className="inline-flex items-center gap-2" aria-label="Sabi home">
-      <span className="grid h-8 w-8 place-items-center rounded-xl bg-brand text-bg">
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
-          <path d="M5 16c2.2-4.4 4.6-6.4 7-6.4s4.8 2 7 6.4" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-          <circle cx="12" cy="8.2" r="2" fill="currentColor" />
-        </svg>
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand text-white text-lg font-bold">
+        S
       </span>
-      <span className="text-[1.25rem] font-semibold tracking-[-0.03em]">Sabi</span>
+      <span className="text-[1.35rem] font-bold tracking-[-0.03em]">Sabi</span>
     </Link>
   );
 }

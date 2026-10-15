@@ -1,16 +1,9 @@
-export const CATEGORIES = [
-  { id: "sports", label: "Sports" },
-  { id: "business", label: "Business" },
-  { id: "technology", label: "Technology" },
-  { id: "entertainment", label: "Entertainment" },
-  { id: "politics", label: "Politics" },
-  { id: "world", label: "World" },
-] as const;
+// Simple formatting helpers - no jargon
 
-export const DEMO_NOTE = "Demo balances and results are simulated. No real money moves, and demo results are not official outcomes.";
+export const DEMO_NOTE = "Na demo this. No real money dey inside. All results na just practice.";
 
 export function categoryLabel(id: string) {
-  return CATEGORIES.find((c) => c.id === id)?.label ?? id;
+  return id;
 }
 
 export function formatNgn(value: number) {
@@ -23,7 +16,7 @@ export function formatCompactNgn(value: number) {
   const abs = Math.abs(value);
   const sign = value < 0 ? "−" : "";
   if (abs >= 1_000_000) return `${sign}₦${(abs / 1_000_000).toFixed(abs >= 10_000_000 ? 0 : 1)}M`;
-  if (abs >= 1_000) return `${sign}₦${Math.round(abs / 1_000)}K`;
+  if (abs >= 1_000) return `${sign}₦${Math.round(abs / 1000)}K`;
   return `${sign}₦${Math.round(abs)}`;
 }
 
@@ -32,7 +25,7 @@ export function formatSignedNgn(value: number) {
   return formatNgn(value);
 }
 
-// Ratio in, percent out: 0.875 -> "+88%".
+// Return ratio -> simple profit %
 export function formatReturn(ratio: number | null) {
   if (ratio === null || Number.isNaN(ratio)) return "—";
   const pct = Math.round(ratio * 100);
@@ -40,28 +33,46 @@ export function formatReturn(ratio: number | null) {
 }
 
 export function formatAccuracy(ratio: number | null) {
-  if (ratio === null || Number.isNaN(ratio)) return "—";
+  if (ratio === null || Number.isNaN(ratio)) return "0%";
   return `${Math.round(ratio * 100)}%`;
 }
 
-// Basis points to a probability: 5800 -> "58%".
+// Basis points to percentage: 5800 -> "58%", plain and simple
 export function formatChance(bps: number) {
   return `${Math.round(bps / 100)}%`;
 }
 
-// Basis points to a price in cents: 5800 -> "58¢".
-export function formatCents(bps: number) {
-  return `${Math.round(bps / 100)}¢`;
+// What does this percentage mean in plain English?
+export function chanceMeaning(bps: number): string {
+  const pct = Math.round(bps / 100);
+  if (pct >= 80) return "Very likely";
+  if (pct >= 65) return "Likely";
+  if (pct >= 45) return "Almost 50/50";
+  if (pct >= 30) return "Not too likely";
+  if (pct >= 15) return "Long shot";
+  return "Big long shot";
 }
 
-export function formatDate(date: Date | string) {
-  const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+// For ₦1000 staked, how much you win if right?
+export function potentialWinShort(stake: number, priceBps: number) {
+  const win = Math.floor((stake * 10000) / priceBps);
+  return formatNgn(win);
 }
 
-// "2h ago", "in 3d". Used for activity timestamps.
-export function formatAgo(date: Date | string, now = Date.now()) {
-  const t = typeof date === "string" ? new Date(date).getTime() : date.getTime();
+// Profit only (what you gain extra)
+export function profitIfWin(stake: number, priceBps: number) {
+  const win = Math.floor((stake * 10000) / priceBps);
+  return formatNgn(win - stake);
+}
+
+export function formatDate(date: Date | string | number) {
+  const d = typeof date === "string" ? new Date(date) : new Date(date);
+  return d.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
+}
+
+// "2h ago", "in 3d"
+export function formatAgo(date: Date | string | number, now = Date.now()) {
+  const t = typeof date === "string" ? new Date(date).getTime() : typeof date === "number" ? date : date.getTime();
   const diff = t - now;
   const abs = Math.abs(diff);
   const min = Math.round(abs / 60000);
@@ -73,9 +84,10 @@ export function formatAgo(date: Date | string, now = Date.now()) {
   return diff >= 0 ? `in ${d}d` : `${d}d ago`;
 }
 
-// Market timing: "Closes in 3d", "Closes in 4h", "Closed".
-export function closesLabel(closesAt: string, now = Date.now()) {
-  const diff = new Date(closesAt).getTime() - now;
+// Closes label - plain language
+export function closesLabel(closesAt: string | number, now = Date.now()) {
+  const t = typeof closesAt === "string" ? new Date(closesAt).getTime() : closesAt;
+  const diff = t - now;
   if (diff <= 0) return "Closed";
   const min = Math.round(diff / 60000);
   if (min < 60) return `Closes in ${min}m`;
