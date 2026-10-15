@@ -29,11 +29,11 @@ export default async function PortfolioPage() {
 
         <div className="mt-8 grid grid-cols-3 gap-3 md:gap-4">
           <Stat label="Still running" value={String(open.length)} hint={`${formatNgn(you.openStake)} put down`} />
-          <Stat label="Don end" value={String(settled.length)} hint={`${formatAccuracy(you.accuracy)} correct`} />
+          <Stat label="Settled" value={String(settled.length)} hint={`${formatAccuracy(you.accuracy)} correct`} />
           <Stat
             label="Profit/Loss"
             value={formatReturn(you.returnRatio)}
-            hint={you.settled ? `${formatSignedNgn(you.profit)} total` : "No bets don end yet"}
+            hint={you.settled ? `${formatSignedNgn(you.profit)} total` : "No bets have been settled yet"}
             tone={you.profit > 0 ? "yes" : you.profit < 0 ? "no" : undefined}
           />
         </div>
@@ -42,7 +42,7 @@ export default async function PortfolioPage() {
       <section aria-labelledby="open-heading">
         <div className="flex items-end justify-between">
           <h2 id="open-heading" className="text-2xl font-bold tracking-[-0.02em]">
-            🎯 Bets still running
+            🎯 Open bets
           </h2>
           <span className="num text-sm text-muted">{open.length}</span>
         </div>
@@ -51,8 +51,8 @@ export default async function PortfolioPage() {
             open.map((p: any) => <PositionRow key={p.id} position={p} />)
           ) : (
             <EmptyState
-              title="You never put any bet"
-              body="Go look markets, pick one, put your demo money."
+              title="You have not placed any bets yet"
+              body="Browse the markets and make a prediction using your demo balance."
               href="/markets"
               action="See markets"
             />
@@ -63,7 +63,7 @@ export default async function PortfolioPage() {
       <section aria-labelledby="settled-heading">
         <div className="flex items-end justify-between">
           <h2 id="settled-heading" className="text-2xl font-bold tracking-[-0.02em]">
-            ✅ Bets wey don end
+            ✅ Settled bets
           </h2>
           <span className="num text-sm text-muted">{settled.length}</span>
         </div>
@@ -71,14 +71,14 @@ export default async function PortfolioPage() {
           {settled.length ? (
             settled.map((p: any) => <PositionRow key={p.id} position={p} />)
           ) : (
-            <p className="text-sm text-muted">When your bets end, result go show here.</p>
+            <p className="text-sm text-muted">Results will appear here after your bets are settled.</p>
           )}
         </div>
       </section>
 
       <div className="border-t border-line pt-6">
         <p className="text-sm font-semibold">Reset demo</p>
-        <p className="mt-1 text-sm text-muted">If you want start everything from scratch, click here. All your bets go vanish.</p>
+        <p className="mt-1 text-sm text-muted">Start over to restore the demo to its original state. This will remove all your bets.</p>
         <div className="mt-3">
           <ResetButton />
         </div>

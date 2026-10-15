@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    default: "Sabi · Predict, bet demo money, follow sharp guys",
+    default: "Sabi · Make predictions using demo money",
     template: "%s · Sabi",
   },
   description:
@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   try {
     data = getData();
   } catch (error) {
-    boot = error instanceof Error ? error.message : "Sabi no load right now.";
+    boot = error instanceof Error ? error.message : "Sabi could not load right now.";
   }
 
   return (
@@ -41,8 +41,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         ) : (
           <main className="mx-auto max-w-xl px-6 py-16">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Sabi</p>
-            <h1 className="mt-3 text-4xl font-bold tracking-[-0.03em]">Sabi no load.</h1>
-            <p className="mt-4 text-sm leading-6 text-muted">{boot ?? "Something go wrong. Restart am."}</p>
+            <h1 className="mt-3 text-4xl font-bold tracking-[-0.03em]">Sabi could not load.</h1>
+            <p className="mt-4 text-sm leading-6 text-muted">{boot ?? "Something went wrong. Please restart the app."}</p>
           </main>
         )}
       </body>

@@ -81,7 +81,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "you",
     name: "You",
     city: "Your Campus",
-    bio: "Just dey learn. Small small, we go blow.",
+    bio: "Just getting started. We will grow step by step.",
     style: "New on the block",
     initials: "YU",
     hue: "#2FD47F",
@@ -93,7 +93,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "chidiboi",
     name: "Chidi 'Sharp' Okoro",
     city: "UNILAG",
-    bio: "Sports guru. If you need match tips, follow me. I no dey miss.",
+    bio: "Sports expert. If you need match tips, follow me. I do not miss.",
     style: "Sports analyst",
     initials: "CO",
     hue: "#3B82F6",
@@ -105,7 +105,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "aminaa",
     name: "Amina Yusuf",
     city: "ABU Zaria",
-    bio: "I follow Nollywood and reality TV like my life depends on am.",
+    bio: "I follow Nollywood and reality TV closely.",
     style: "Entertainment plug",
     initials: "AY",
     hue: "#F97316",
@@ -117,7 +117,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "tobithegreat",
     name: "Tobi Bakare",
     city: "UI Ibadan",
-    bio: "Tech bro in training. I know when Apple/Google want to drop something.",
+    bio: "Tech enthusiast in training. I know when Apple or Google will release something.",
     style: "Tech & gadgets",
     initials: "TB",
     hue: "#A855F7",
@@ -129,7 +129,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "nesaofficial",
     name: "Nesa Edoho",
     city: "UNIPORT",
-    bio: "Politics and policy. CBN rate decisions no dey pass me by.",
+    bio: "Politics and policy. CBN rate decisions do not pass me by.",
     style: "Policy watcher",
     initials: "NE",
     hue: "#14B8A6",
@@ -141,7 +141,7 @@ const PEOPLE: Omit<Trader, "followers" | "following">[] = [
     handle: "favegirl",
     name: "Favour Okonkwo",
     city: "FUTA",
-    bio: "Music, movies and vibes. If it's trending, I see am first.",
+    bio: "Music, movies and trends. If it is trending, I see it first.",
     style: "Pop culture",
     initials: "FO",
     hue: "#EC4899",
@@ -155,23 +155,23 @@ const MARKETS: Market[] = [
     id: "eagles-next",
     question: "Will Super Eagles win their next match?",
     category: "Sports",
-    simpleExplain: "Nigeria national team match. Win in 90 minutes = Yes. Draw or lose = No.",
-    howWeDecide: "We use the official full-time score from CAF/FIFA. Extra time no count.",
+    simpleExplain: "Nigeria national team match. A win in 90 minutes counts as Yes. A draw or loss counts as No.",
+    howWeDecide: "We use the official full-time score from CAF/FIFA. Extra time does not count.",
     closesAt: Date.now() + 8 * 3600 * 1000,
     resolvesAt: Date.now() + 14 * 3600 * 1000,
     status: "open",
     featured: true,
     settledOutcomeId: null,
     outcomes: [
-      { id: "eagles-next__yes", key: "yes", label: "Yes, them go win", priceBps: 5800 },
+      { id: "eagles-next__yes", key: "yes", label: "Yes, they will win", priceBps: 5800 },
       { id: "eagles-next__no", key: "no", label: "No (draw or loss)", priceBps: 4200 },
     ],
   },
   {
     id: "cbn-rate",
-    question: "CBN go change interest rate next week?",
+    question: "Will the CBN change the interest rate next week?",
     category: "Money Matter",
-    simpleExplain: "Central Bank meeting. If them keep rate as e be = Hold. If them change am = Change.",
+    simpleExplain: "Central Bank meeting. If the rate stays the same, it is Hold. If it changes, it is Change.",
     howWeDecide: "We read the official CBN statement after the meeting.",
     closesAt: Date.now() + 72 * 3600 * 1000,
     resolvesAt: Date.now() + 75 * 3600 * 1000,
@@ -180,14 +180,14 @@ const MARKETS: Market[] = [
     settledOutcomeId: null,
     outcomes: [
       { id: "cbn-rate__hold", key: "hold", label: "Hold (no change)", priceBps: 6500 },
-      { id: "cbn-rate__change", key: "change", label: "Change am", priceBps: 3500 },
+      { id: "cbn-rate__change", key: "change", label: "Change it", priceBps: 3500 },
     ],
   },
   {
     id: "bbnaija-winner",
-    question: "Who go win Big Brother Naija next season?",
+    question: "Who will win Big Brother Naija next season?",
     category: "Entertainment",
-    simpleExplain: "Pick who you think go carry the ₦100M prize. No too listen to online noise.",
+    simpleExplain: "Pick who you think will win the ₦100M prize. Do not just follow online noise.",
     howWeDecide: "Official winner announcement on the live finale show.",
     closesAt: Date.now() + 720 * 3600 * 1000,
     resolvesAt: Date.now() + 745 * 3600 * 1000,
@@ -203,25 +203,25 @@ const MARKETS: Market[] = [
   },
   {
     id: "fuel-price",
-    question: "Fuel price go go up before December?",
+    question: "Will fuel price go up before December?",
     category: "Money Matter",
-    simpleExplain: "If pump price for petrol increase anywhere before Dec 1 = Yes.",
-    howWeDecide: "We check official NNPCL pump price nationwide.",
+    simpleExplain: "If the petrol pump price increases anywhere before December 1, it is Yes.",
+    howWeDecide: "We check the official NNPCL pump price nationwide.",
     closesAt: Date.now() + 960 * 3600 * 1000,
     resolvesAt: Date.now() + 985 * 3600 * 1000,
     status: "open",
     featured: false,
     settledOutcomeId: null,
     outcomes: [
-      { id: "fuel-price__yes", key: "yes", label: "Yes, e go increase", priceBps: 4100 },
-      { id: "fuel-price__no", key: "no", label: "No, e go stay same", priceBps: 5900 },
+      { id: "fuel-price__yes", key: "yes", label: "Yes, it will increase", priceBps: 4100 },
+      { id: "fuel-price__no", key: "no", label: "No, it will stay the same", priceBps: 5900 },
     ],
   },
   {
     id: "asuu-strike",
-    question: "ASUU go call strike this semester?",
+    question: "Will ASUU call a strike this semester?",
     category: "Campus",
-    simpleExplain: "If ASUU declare nationwide strike before semester end = Yes.",
+    simpleExplain: "If ASUU declares a nationwide strike before the semester ends, it is Yes.",
     howWeDecide: "Official ASUU press release or circular.",
     closesAt: Date.now() + 480 * 3600 * 1000,
     resolvesAt: Date.now() + 504 * 3600 * 1000,
@@ -229,15 +229,15 @@ const MARKETS: Market[] = [
     featured: false,
     settledOutcomeId: null,
     outcomes: [
-      { id: "asuu-strike__yes", key: "yes", label: "Yes, strike go happen", priceBps: 3800 },
+      { id: "asuu-strike__yes", key: "yes", label: "Yes, a strike will happen", priceBps: 3800 },
       { id: "asuu-strike__no", key: "no", label: "No strike", priceBps: 6200 },
     ],
   },
   {
     id: "davido-album",
-    question: "Davido go drop new album before end of year?",
+    question: "Will Davido release a new album before the end of the year?",
     category: "Entertainment",
-    simpleExplain: "If OBO drop a full album (not singles) before Dec 31 = Yes.",
+    simpleExplain: "If OBO releases a full album (not singles) before December 31, it is Yes.",
     howWeDecide: "Official release on streaming platforms (Spotify, Apple Music, etc).",
     closesAt: Date.now() + 1440 * 3600 * 1000,
     resolvesAt: Date.now() + 1464 * 3600 * 1000,
@@ -251,9 +251,9 @@ const MARKETS: Market[] = [
   },
   {
     id: "iphone-nigeria",
-    question: "iPhone 16 go sell for less than ₦1.5M for Nigeria before January?",
+    question: "Will the iPhone 16 sell for less than ₦1.5M in Nigeria before January?",
     category: "Tech",
-    simpleExplain: "If official or slot price drop below ₦1.5M for base model = Yes.",
+    simpleExplain: "If the official or slot price drops below ₦1.5M for the base model, it is Yes.",
     howWeDecide: "We check Slot, Jumia and official Apple stores.",
     closesAt: Date.now() + 1200 * 3600 * 1000,
     resolvesAt: Date.now() + 1224 * 3600 * 1000,
@@ -261,15 +261,15 @@ const MARKETS: Market[] = [
     featured: false,
     settledOutcomeId: null,
     outcomes: [
-      { id: "iphone-nigeria__yes", key: "yes", label: "Yes, price go drop", priceBps: 3300 },
-      { id: "iphone-nigeria__no", key: "no", label: "No, e go remain high", priceBps: 6700 },
+      { id: "iphone-nigeria__yes", key: "yes", label: "Yes, price will drop", priceBps: 3300 },
+      { id: "iphone-nigeria__no", key: "no", label: "No, it will stay high", priceBps: 6700 },
     ],
   },
   {
     id: "arsenal-title",
-    question: "Arsenal go win Premier League this season?",
+    question: "Will Arsenal win the Premier League this season?",
     category: "Sports",
-    simpleExplain: "If Arsenal finish top of the EPL table in May = Yes.",
+    simpleExplain: "If Arsenal finish top of the EPL table in May, it is Yes.",
     howWeDecide: "Final Premier League table at end of season.",
     closesAt: Date.now() + 3600 * 3600 * 1000,
     resolvesAt: Date.now() + 3650 * 3600 * 1000,
@@ -277,7 +277,7 @@ const MARKETS: Market[] = [
     featured: false,
     settledOutcomeId: null,
     outcomes: [
-      { id: "arsenal-title__yes", key: "yes", label: "Yes, them go win am", priceBps: 2700 },
+      { id: "arsenal-title__yes", key: "yes", label: "Yes, they will win it", priceBps: 2700 },
       { id: "arsenal-title__no", key: "no", label: "No, another club wins", priceBps: 7300 },
     ],
   },
@@ -286,7 +286,7 @@ const MARKETS: Market[] = [
     id: "r-eagles-last",
     question: "Super Eagles win their last friendly?",
     category: "Sports",
-    simpleExplain: "That match don end. The result don come out.",
+    simpleExplain: "That match has ended. The result is out.",
     howWeDecide: "Official match report.",
     closesAt: Date.now() - 96 * 3600 * 1000,
     resolvesAt: Date.now() - 72 * 3600 * 1000,
@@ -302,7 +302,7 @@ const MARKETS: Market[] = [
     id: "r-asuu-last",
     question: "ASUU call strike last semester?",
     category: "Campus",
-    simpleExplain: "That one don end. ASUU no call strike.",
+    simpleExplain: "That one has ended. ASUU did not call a strike.",
     howWeDecide: "ASUU official statement.",
     closesAt: Date.now() - 500 * 3600 * 1000,
     resolvesAt: Date.now() - 480 * 3600 * 1000,
@@ -319,43 +319,43 @@ const MARKETS: Market[] = [
 // Demo positions people have already placed
 const SEED_POSITIONS: Omit<Position, "id" | "createdAt">[] = [
   // You
-  { traderId: "you", marketId: "eagles-next", outcomeId: "eagles-next__yes", stake: 5000, priceBps: 5800, payout: null, status: "open", thesis: "Home advantage. Team dey form right now." },
-  { traderId: "you", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 8000, priceBps: 6500, payout: null, status: "open", thesis: "CBN no dey rush change things." },
+  { traderId: "you", marketId: "eagles-next", outcomeId: "eagles-next__yes", stake: 5000, priceBps: 5800, payout: null, status: "open", thesis: "Home advantage. The team is in good form right now." },
+  { traderId: "you", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 8000, priceBps: 6500, payout: null, status: "open", thesis: "CBN does not rush to change things." },
   { traderId: "you", marketId: "r-eagles-last", outcomeId: "r-eagles-last__yes", stake: 3000, priceBps: 5000, payout: 6000, status: "won", thesis: null },
-  { traderId: "you", marketId: "r-asuu-last", outcomeId: "r-asuu-last__yes", stake: 4000, priceBps: 4000, payout: 0, status: "lost", thesis: "I thought say strike go happen. Omo I miss." },
+  { traderId: "you", marketId: "r-asuu-last", outcomeId: "r-asuu-last__yes", stake: 4000, priceBps: 4000, payout: 0, status: "lost", thesis: "I thought a strike would happen. I was wrong." },
   // Chidi
-  { traderId: "chidi", marketId: "eagles-next", outcomeId: "eagles-next__yes", stake: 15000, priceBps: 5600, payout: null, status: "open", thesis: "Form is good. Draw na the only risk." },
-  { traderId: "chidi", marketId: "arsenal-title", outcomeId: "arsenal-title__no", stake: 20000, priceBps: 7300, payout: null, status: "open", thesis: "Man City still dey there. Arsenal no go win am." },
+  { traderId: "chidi", marketId: "eagles-next", outcomeId: "eagles-next__yes", stake: 15000, priceBps: 5600, payout: null, status: "open", thesis: "Form is good. A draw is the only risk." },
+  { traderId: "chidi", marketId: "arsenal-title", outcomeId: "arsenal-title__no", stake: 20000, priceBps: 7300, payout: null, status: "open", thesis: "Man City is still there. Arsenal will not win it." },
   { traderId: "chidi", marketId: "r-eagles-last", outcomeId: "r-eagles-last__yes", stake: 10000, priceBps: 5000, payout: 20000, status: "won", thesis: null },
   // Amina
-  { traderId: "amina", marketId: "bbnaija-winner", outcomeId: "bbnaija-winner__zara", stake: 7000, priceBps: 2500, payout: null, status: "open", thesis: "Zara get fans wey no dey sleep." },
-  { traderId: "amina", marketId: "davido-album", outcomeId: "davido-album__yes", stake: 5000, priceBps: 5200, payout: null, status: "open", thesis: "OBO don tey wey him drop album." },
+  { traderId: "amina", marketId: "bbnaija-winner", outcomeId: "bbnaija-winner__zara", stake: 7000, priceBps: 2500, payout: null, status: "open", thesis: "Zara has fans who do not sleep." },
+  { traderId: "amina", marketId: "davido-album", outcomeId: "davido-album__yes", stake: 5000, priceBps: 5200, payout: null, status: "open", thesis: "OBO has not released an album in a while." },
   // Tobi
-  { traderId: "tobi", marketId: "iphone-nigeria", outcomeId: "iphone-nigeria__no", stake: 12000, priceBps: 6700, payout: null, status: "open", thesis: "Dollar still high. Price no go drop." },
-  { traderId: "tobi", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 6000, priceBps: 6500, payout: null, status: "open", thesis: "Me I no see rate changing anytime soon." },
+  { traderId: "tobi", marketId: "iphone-nigeria", outcomeId: "iphone-nigeria__no", stake: 12000, priceBps: 6700, payout: null, status: "open", thesis: "The dollar is still high. Price will not drop." },
+  { traderId: "tobi", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 6000, priceBps: 6500, payout: null, status: "open", thesis: "I do not see the rate changing anytime soon." },
   // Nesa
-  { traderId: "nesa", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 25000, priceBps: 6700, payout: null, status: "open", thesis: "Inflation still high. Hold is the call." },
-  { traderId: "nesa", marketId: "fuel-price", outcomeId: "fuel-price__no", stake: 15000, priceBps: 5900, payout: null, status: "open", thesis: "Subsidy don already settle. No more increase this year." },
+  { traderId: "nesa", marketId: "cbn-rate", outcomeId: "cbn-rate__hold", stake: 25000, priceBps: 6700, payout: null, status: "open", thesis: "Inflation is still high. Hold is the call." },
+  { traderId: "nesa", marketId: "fuel-price", outcomeId: "fuel-price__no", stake: 15000, priceBps: 5900, payout: null, status: "open", thesis: "Subsidy has already settled. No more increase this year." },
   { traderId: "nesa", marketId: "r-asuu-last", outcomeId: "r-asuu-last__no", stake: 8000, priceBps: 6000, payout: 13333, status: "won", thesis: null },
   // Fave
-  { traderId: "fave", marketId: "bbnaija-winner", outcomeId: "bbnaija-winner__korede", stake: 4000, priceBps: 2800, payout: null, status: "open", thesis: "Korede get the energy. People love am." },
-  { traderId: "fave", marketId: "davido-album", outcomeId: "davido-album__yes", stake: 3000, priceBps: 5200, payout: null, status: "open", thesis: "Him don dey tease the album since." },
+  { traderId: "fave", marketId: "bbnaija-winner", outcomeId: "bbnaija-winner__korede", stake: 4000, priceBps: 2800, payout: null, status: "open", thesis: "Korede has the energy. People love him." },
+  { traderId: "fave", marketId: "davido-album", outcomeId: "davido-album__yes", stake: 3000, priceBps: 5200, payout: null, status: "open", thesis: "He has been teasing the album for a while." },
 ];
 
 const SEED_COMMENTS: Omit<Comment, "id" | "createdAt">[] = [
-  { traderId: "chidi", body: "Eagles defence don solid well well. I no see loss here.", marketId: "eagles-next" } as any,
-  { traderId: "tobi", body: "No be only defence. Away match na different kain tin.", marketId: "eagles-next" } as any,
-  { traderId: "nesa", body: "Make una no listen to news headlines. Read the CBN communique before you place bet.", marketId: "cbn-rate" } as any,
-  { traderId: "amina", body: "Zara fans are different on Twitter. Them no dey play.", marketId: "bbnaija-winner" } as any,
+  { traderId: "chidi", body: "The Eagles defence is solid now. I do not see a loss here.", marketId: "eagles-next" } as any,
+  { traderId: "tobi", body: "It is not only about defence. An away match is a different thing.", marketId: "eagles-next" } as any,
+  { traderId: "nesa", body: "Do not listen to news headlines. Read the CBN communique before you place a bet.", marketId: "cbn-rate" } as any,
+  { traderId: "amina", body: "Zara fans are different on Twitter. They do not play.", marketId: "bbnaija-winner" } as any,
 ];
 
 // Fix - add marketId to comments
 const COMMENTS_DATA: Array<{ traderId: string; marketId: string; body: string }> = [
-  { traderId: "chidi", marketId: "eagles-next", body: "Eagles defence don solid well well. I no see loss here." },
-  { traderId: "tobi", marketId: "eagles-next", body: "No be only defence. Away match na different kain tin." },
-  { traderId: "nesa", marketId: "cbn-rate", body: "Make una no listen to news headlines. Read the CBN communique before you place bet." },
-  { traderId: "amina", marketId: "bbnaija-winner", body: "Zara fans are different on Twitter. Them no dey sleep." },
-  { traderId: "fave", marketId: "davido-album", body: "OBO don post studio pics 3 times this month. Album loading." },
+  { traderId: "chidi", marketId: "eagles-next", body: "The Eagles defence is solid now. I do not see a loss here." },
+  { traderId: "tobi", marketId: "eagles-next", body: "It is not only about defence. An away match is a different thing." },
+  { traderId: "nesa", marketId: "cbn-rate", body: "Do not listen to news headlines. Read the CBN communique before you place a bet." },
+  { traderId: "amina", marketId: "bbnaija-winner", body: "Zara fans are different on Twitter. They do not sleep." },
+  { traderId: "fave", marketId: "davido-album", body: "OBO has posted studio pictures 3 times this month. Album loading." },
 ];
 
 const FOLLOWS: [string, string][] = [
@@ -565,20 +565,20 @@ type ActionResult = { ok: true; message: string } | { ok: false; error: string }
 
 export function placePosition(marketId: string, outcomeId: string, stake: number, thesis: string | null): ActionResult {
   const market = state.markets.find((m) => m.id === marketId);
-  if (!market) return { ok: false, error: "We no see that market." };
-  if (market.status === "settled") return { ok: false, error: "This don end already." };
-  if (market.closesAt <= Date.now()) return { ok: false, error: "Bet don close for this market." };
+  if (!market) return { ok: false, error: "We could not find that market." };
+  if (market.status === "settled") return { ok: false, error: "This market has already ended." };
+  if (market.closesAt <= Date.now()) return { ok: false, error: "Betting has closed for this market." };
 
   const outcome = market.outcomes.find((o) => o.id === outcomeId);
-  if (!outcome) return { ok: false, error: "Pick one option." };
+  if (!outcome) return { ok: false, error: "Please pick one option." };
 
   const existing = state.positions.find((p) => p.traderId === "you" && p.marketId === marketId);
-  if (existing) return { ok: false, error: "You don already put money for this market. One per customer." };
+  if (existing) return { ok: false, error: "You have already placed a bet on this market. Only one bet per market." };
 
   const bal = calculateBalance("you");
-  if (stake > bal) return { ok: false, error: `Your demo money no reach that. You get ₦${bal.toLocaleString("en-NG")}.` };
-  if (stake < MIN_POSITION_NGN) return { ok: false, error: `Smallest bet na ₦${MIN_POSITION_NGN}.` };
-  if (stake > MAX_POSITION_NGN) return { ok: false, error: `Biggest bet na ₦${MAX_POSITION_NGN.toLocaleString("en-NG")}.` };
+  if (stake > bal) return { ok: false, error: `Your demo balance is not enough. You have ₦${bal.toLocaleString("en-NG")}.` };
+  if (stake < MIN_POSITION_NGN) return { ok: false, error: `Minimum bet is ₦${MIN_POSITION_NGN}.` };
+  if (stake > MAX_POSITION_NGN) return { ok: false, error: `Maximum bet is ₦${MAX_POSITION_NGN.toLocaleString("en-NG")}.` };
 
   const entryPrice = outcome.priceBps;
   state.positions.push({
@@ -614,16 +614,16 @@ export function placePosition(marketId: string, outcomeId: string, stake: number
   const potential = payoutFor(stake, entryPrice);
   return {
     ok: true,
-    message: `You don put ₦${stake.toLocaleString("en-NG")} on "${outcome.label}". If you win, you collect ₦${potential.toLocaleString("en-NG")} back. Demo money only, no real cash.`,
+    message: `You placed ₦${stake.toLocaleString("en-NG")} on "${outcome.label}". If you win, you collect ₦${potential.toLocaleString("en-NG")} back. Demo money only, no real cash.`,
   };
 }
 
 export function settleMarket(marketId: string, outcomeId: string): ActionResult {
   const market = state.markets.find((m) => m.id === marketId);
-  if (!market) return { ok: false, error: "Market no dey." };
-  if (market.status === "settled") return { ok: false, error: "This don already settle." };
+  if (!market) return { ok: false, error: "Market not found." };
+  if (market.status === "settled") return { ok: false, error: "This market has already been settled." };
   const winner = market.outcomes.find((o) => o.id === outcomeId);
-  if (!winner) return { ok: false, error: "Pick winner." };
+  if (!winner) return { ok: false, error: "Please pick a winner." };
 
   market.status = "settled";
   market.settledOutcomeId = winner.id;
@@ -640,15 +640,15 @@ export function settleMarket(marketId: string, outcomeId: string): ActionResult 
 
   return {
     ok: true,
-    message: `Don settle: ${winner.label} wins. All bets updated. Remember, na demo result.`,
+    message: `Settled: ${winner.label} wins. All bets updated. Remember, this is a demo result.`,
   };
 }
 
 export function toggleFollow(targetHandle: string): ActionResult {
   const target = state.traders.find((t) => t.handle === targetHandle);
   const you = getYou();
-  if (!target) return { ok: false, error: "Person no dey." };
-  if (target.id === you.id) return { ok: false, error: "You no follow yourself." };
+  if (!target) return { ok: false, error: "Person not found." };
+  if (target.id === you.id) return { ok: false, error: "You cannot follow yourself." };
 
   const youFollowIdx = you.following.indexOf(target.id);
   const targetFollowerIdx = target.followers.indexOf(you.id);
@@ -656,17 +656,17 @@ export function toggleFollow(targetHandle: string): ActionResult {
   if (youFollowIdx >= 0) {
     you.following.splice(youFollowIdx, 1);
     if (targetFollowerIdx >= 0) target.followers.splice(targetFollowerIdx, 1);
-    return { ok: true, message: `You don unfollow ${target.name}.` };
+    return { ok: true, message: `You have unfollowed ${target.name}.` };
   } else {
     you.following.push(target.id);
     target.followers.push(you.id);
-    return { ok: true, message: `You don follow ${target.name}.` };
+    return { ok: true, message: `You are now following ${target.name}.` };
   }
 }
 
 export function postComment(marketId: string, body: string): ActionResult {
   const market = state.markets.find((m) => m.id === marketId);
-  if (!market) return { ok: false, error: "Market no dey." };
+  if (!market) return { ok: false, error: "Market not found." };
   state.comments.push({
     id: state.nextCommentId++,
     traderId: "you",
@@ -674,12 +674,12 @@ export function postComment(marketId: string, body: string): ActionResult {
     body: body.trim(),
     createdAt: Date.now(),
   });
-  return { ok: true, message: "Comment don post." };
+  return { ok: true, message: "Comment posted." };
 }
 
 export function resetDemo(): ActionResult {
   resetState();
-  return { ok: true, message: "Demo don reset. Everything back to how e start." };
+  return { ok: true, message: "Demo reset. Everything is back to the start." };
 }
 
 // Helper functions for views

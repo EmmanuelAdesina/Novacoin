@@ -102,10 +102,10 @@ export function TradePanel({
   if (status === "settled") {
     return (
       <section id="trade" className="rounded-3xl border border-line bg-panel p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Result don show</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Result available</p>
         <p className="mt-2 text-2xl font-bold">Winner: {settledLabel}</p>
         <p className="mt-2 text-sm leading-6 text-muted">
-          This don end. All bets don settle. No more betting here.
+          This market has ended. All predictions have been settled. No more predictions can be placed.
         </p>
       </section>
     );
@@ -114,9 +114,9 @@ export function TradePanel({
   if (status === "closed") {
     return (
       <section id="trade" className="rounded-3xl border border-line bg-panel p-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Bet don close</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted">Predictions closed</p>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Time don reach. We dey wait for the result now.
+          The deadline has passed. The result is pending.
         </p>
       </section>
     );
@@ -147,7 +147,7 @@ export function TradePanel({
             </>
           ) : existing.status === "won" ? (
             <div className="mt-2 flex justify-between text-sm">
-              <span className="text-muted">You don win:</span>
+              <span className="text-muted">You won:</span>
               <span className="num font-bold text-yes">{formatNgn(myPayout)}</span>
             </div>
           ) : (
@@ -157,7 +157,7 @@ export function TradePanel({
             </div>
           )}
         </div>
-        <p className="mt-3 text-sm text-muted">You fit only put one bet per market for this demo.</p>
+        <p className="mt-3 text-sm text-muted">You can place only one prediction per market in this demo.</p>
       </section>
     );
   }
@@ -182,10 +182,10 @@ export function TradePanel({
       }}
     >
       <p className="text-lg font-bold">Place your bet 🎯</p>
-      <p className="mt-1 text-sm text-muted">Pick wetin you think go happen, put your demo money.</p>
+      <p className="mt-1 text-sm text-muted">Choose what you think will happen and use your demo balance.</p>
 
       <fieldset className="mt-5">
-        <legend className="mb-2 text-sm font-medium">Which one you pick?</legend>
+        <legend className="mb-2 text-sm font-medium">Which option do you choose?</legend>
         <div className={cn("grid gap-2", isBinary ? "grid-cols-2" : "grid-cols-1")}>
           {outcomes.map((outcome) => {
             const on = outcome.id === outcomeId;
@@ -222,7 +222,7 @@ export function TradePanel({
       </fieldset>
 
       <label className="mt-5 block text-sm font-medium">
-        How much you want put?
+        How much do you want to predict with?
         <div className="mt-2 flex items-center gap-2 rounded-2xl border border-line-2 bg-[#0f1116] px-4 focus-within:border-brand">
           <span className="text-xl font-bold text-muted">₦</span>
           <input
@@ -256,7 +256,7 @@ export function TradePanel({
       {selected && amount >= MIN_POSITION_NGN ? (
         <div id="payout-note" className="mt-4 rounded-2xl bg-yes/10 border border-yes/20 px-4 py-4">
           <p className="text-sm leading-6">
-            If <strong className="text-yes">{selected.label}</strong> happen:
+            If <strong className="text-yes">{selected.label}</strong> happens:
           </p>
           <div className="mt-2 space-y-1 text-sm">
             <div className="flex justify-between">
@@ -273,24 +273,24 @@ export function TradePanel({
             </div>
           </div>
           <p className="mt-2 text-xs text-yes/80">
-            If e no happen, you lose your {formatNgn(amount)}.
+            If it does not happen, you lose your {formatNgn(amount)} demo stake.
           </p>
         </div>
       ) : (
         <div className="mt-4 rounded-2xl bg-panel-2 px-4 py-3 text-sm text-muted">
-          Minimum bet na ₦{MIN_POSITION_NGN.toLocaleString("en-NG")}. You get {formatNgn(balance)} demo money.
+          Minimum prediction is ₦{MIN_POSITION_NGN.toLocaleString("en-NG")}. Your demo balance is {formatNgn(balance)}.
         </div>
       )}
 
       <label className="mt-4 block text-sm font-medium">
-        Why you believe this? <span className="font-normal text-muted">(optional)</span>
+        Why do you believe this? <span className="font-normal text-muted">(optional)</span>
         <textarea
           className="mt-2 w-full rounded-2xl border border-line-2 bg-panel-2 px-4 py-3 text-sm focus:border-brand focus:outline-none"
           rows={2}
           maxLength={MAX_NOTE_LENGTH}
           value={note}
           onChange={(event) => setNote(event.target.value)}
-          placeholder="Tell people why you think so. E go show for your bet."
+          placeholder="Explain why you think this will happen. It will appear with your prediction."
         />
       </label>
 
@@ -311,10 +311,10 @@ export function TradePanel({
         disabled={pending || !validAmount || !selected}
       >
         {pending
-          ? "Placing bet…"
+          ? "Placing prediction…"
           : selected
-            ? `Bet on "${selected.label}" · ${formatNgn(amount || 0)}`
-            : "Place bet"}
+            ? `Predict "${selected.label}" · ${formatNgn(amount || 0)}`
+            : "Place prediction"}
       </button>
       <p className="mt-3 text-center text-xs text-faint">
         🎮 Demo only — {formatChance(selected?.priceBps ?? 0)} chance. NO REAL MONEY. Just practice.
@@ -352,7 +352,7 @@ export function CommentForm({ marketId }: { marketId: string }) {
           maxLength={MAX_COMMENT_LENGTH}
           value={body}
           onChange={(event) => setBody(event.target.value)}
-          placeholder="Wetin you think? Drop your own take."
+          placeholder="What do you think? Share your view."
         />
       </label>
       <div className="mt-2 flex items-center justify-between gap-3">
@@ -382,7 +382,7 @@ export function SettleControls({ marketId, outcomes }: { marketId: string; outco
     <div className="rounded-2xl border border-dashed border-gold/40 bg-gold/5 p-5">
       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-gold">🎮 Demo Controls (Prototype Only)</p>
       <p className="mt-2 text-sm leading-6 text-muted">
-        Click the winner make we see who win money. Na just demo, real life no be so.
+        Choose the winner to see how the demo results affect predictions. This is a prototype; no real money is involved.
       </p>
       <div className="mt-4 flex flex-wrap gap-2">
         {outcomes.map((o) => (
@@ -404,7 +404,7 @@ export function SettleControls({ marketId, outcomes }: { marketId: string; outco
             }}
             className={btnSmall + " border border-gold/50 text-gold hover:bg-gold/10"}
           >
-            "{o.label}" wins
+            &ldquo;{o.label}&rdquo; wins
           </button>
         ))}
       </div>

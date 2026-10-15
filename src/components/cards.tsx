@@ -13,7 +13,7 @@ export function MarketCard({ market, followed = [] }: { market: any; followed?: 
     market.status === "settled"
       ? `Result: ${market.settledLabel}`
       : market.status === "closed"
-        ? "Don close"
+        ? "Closed"
         : closesLabel(market.closesAt);
 
   return (
@@ -46,7 +46,7 @@ export function MarketCard({ market, followed = [] }: { market: any; followed?: 
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-4 text-xs text-muted">
         <span className="num">
-          {market.traderCount} {market.traderCount === 1 ? "person" : "people"} don bet · {formatCompactNgn(market.volume)} total
+          {market.traderCount} {market.traderCount === 1 ? "person" : "people"} have predicted · {formatCompactNgn(market.volume)} total
         </span>
         <StatusTag status={market.status} />
       </div>
@@ -61,7 +61,7 @@ export function MarketCard({ market, followed = [] }: { market: any; followed?: 
             ))}
           </span>
           {followed[0].name.split(" ")[0]}
-          {followed.length > 1 ? ` and ${followed.length - 1} person you follow don put money` : " don put money here"}
+          {followed.length > 1 ? ` and ${followed.length - 1} person you follow has predicted` : " has predicted here"}
         </p>
       ) : null}
     </Link>
@@ -108,11 +108,11 @@ export function PositionItem({
             </Link>
           ) : null}
           {position.thesis ? (
-            <p className="mt-3 rounded-2xl bg-panel-2 px-4 py-3 text-sm leading-6 text-muted">"{position.thesis}"</p>
+            <p className="mt-3 rounded-2xl bg-panel-2 px-4 py-3 text-sm leading-6 text-muted">&ldquo;{position.thesis}&rdquo;</p>
           ) : null}
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {position.bigBet ? (
-              <span className="rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-semibold text-gold">Big bet 🔥</span>
+              <span className="rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-semibold text-gold">Large prediction 🔥</span>
             ) : null}
             {position.status !== "open" ? (
               <StatusTag status={position.status} />

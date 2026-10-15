@@ -24,7 +24,7 @@ export default async function FeedPage({
         <div>
           <h1 className="text-4xl font-bold tracking-[-0.04em] md:text-6xl">Activity</h1>
           <p className="mt-3 max-w-xl text-muted md:text-lg">
-            See wetin people dey bet on. Follow sharp guys make you see their moves.
+            See what people are predicting. Follow experienced predictors to keep up with their activity.
           </p>
         </div>
         <Segmented
@@ -116,8 +116,8 @@ export default async function FeedPage({
             ))
           ) : (
             <EmptyState
-              title="Nobody wey you follow don bet yet"
-              body="Go follow people from rankings. Their bets go show here."
+              title="Nobody you follow has placed a bet yet"
+              body="Follow people from the rankings to see their bets here."
               href="/leaderboard"
               action="See top predictors"
             />
