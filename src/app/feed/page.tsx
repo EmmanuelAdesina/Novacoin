@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { PositionItem } from "@/components/cards";
-import { EmptyState, Segmented, cn, ChanceBar } from "@/components/ui";
+import { ChanceBar, EmptyState, Segmented, cn } from "@/components/ui";
 import { feedFor, getData, trendingMarkets } from "@/lib/data";
-import { categoryLabel, formatChance, formatCompactNgn } from "@/lib/format";
+import { categoryLabel, chanceMeaning, formatChance, formatCompactNgn } from "@/lib/format";
 
-export const metadata = { title: "Feed" };
+export const metadata = { title: "Activity" };
 
 export default async function FeedPage({
   searchParams,
@@ -12,33 +12,33 @@ export default async function FeedPage({
   searchParams: Promise<{ scope?: string }>;
 }) {
   const { scope: raw } = await searchParams;
-  const data = await getData();
+  const data = getData();
   const scope = raw === "everyone" ? "everyone" : "following";
   const youFollow = new Set(data.you.following);
-  const items = feedFor(data, scope).slice(0, 40);
-  const trending = trendingMarkets(data, 4);
+  const items = feedFor(scope).slice(0, 40);
+  const trending = trendingMarkets(4);
 
   return (
     <div className="space-y-10">
       <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-6xl">Feed</h1>
+          <h1 className="text-4xl font-bold tracking-[-0.04em] md:text-6xl">Activity</h1>
           <p className="mt-3 max-w-xl text-muted md:text-lg">
-            What the traders you follow are backing, and what the market is talking about.
+            See wetin people dey bet on. Follow sharp guys make you see their moves.
           </p>
         </div>
         <Segmented
           items={[
             { href: "/markets", label: "Markets", active: false },
-            { href: "/feed", label: "Feed", active: true },
+            { href: "/feed", label: "Activity", active: true },
           ]}
         />
       </section>
 
       <section aria-labelledby="trending-heading">
         <div className="flex items-end justify-between">
-          <h2 id="trending-heading" className="text-xl font-semibold tracking-[-0.01em]">
-            Trending markets
+          <h2 id="trending-heading" className="text-xl font-bold tracking-[-0.01em]">
+            🔥 Trending
           </h2>
           <Link href="/markets" className="text-sm font-semibold text-brand hover:underline">
             See all
@@ -51,7 +51,7 @@ export default async function FeedPage({
               <Link
                 key={m.id}
                 href={`/markets/${m.id}`}
-                className="w-[78%] shrink-0 rounded-3xl border border-line bg-panel p-4 transition hover:border-line-2 md:w-auto"
+                className="w-[78%] shrink-0 rounded-3xl border border-line bg-panel p-4 transition hover:border-brand/40 md:w-auto"
               >
                 <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted">
                   {categoryLabel(m.category)}
@@ -61,15 +61,16 @@ export default async function FeedPage({
                   <div className="mt-3">
                     <div className="flex items-baseline justify-between text-xs">
                       <span className="text-muted">{lead.label}</span>
-                      <span className="num text-base font-semibold text-brand">{formatChance(lead.priceBps)}</span>
+                      <span className="num text-base font-bold text-brand">{formatChance(lead.priceBps)}</span>
                     </div>
+                    <p className="text-[10px] text-muted">{chanceMeaning(lead.priceBps)}</p>
                     <div className="mt-2">
                       <ChanceBar bps={lead.priceBps} />
                     </div>
                   </div>
                 ) : null}
                 <p className="num mt-3 text-xs text-faint">
-                  {m.traderCount} traders · {formatCompactNgn(m.volume)}
+                  {m.traderCount} people · {formatCompactNgn(m.volume)}
                 </p>
               </Link>
             );
@@ -79,13 +80,13 @@ export default async function FeedPage({
 
       <section aria-labelledby="stream-heading">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 id="stream-heading" className="text-xl font-semibold tracking-[-0.01em]">
-            Latest positions
+          <h2 id="stream-heading" className="text-xl font-bold tracking-[-0.01em]">
+            Recent bets
           </h2>
           <div className="inline-flex rounded-full border border-line bg-panel p-1 text-sm font-medium">
             {[
-              { id: "following", label: "Following" },
-              { id: "everyone", label: "Everyone" },
+              { id: "following", label: "People I follow" },
+              { id: "everyone", label: "Everybody" },
             ].map((s) => (
               <Link
                 key={s.id}
@@ -115,10 +116,10 @@ export default async function FeedPage({
             ))
           ) : (
             <EmptyState
-              title="Nothing from people you follow yet"
-              body="Follow traders from the leaderboard or a market page. Their positions will show up here."
+              title="Nobody wey you follow don bet yet"
+              body="Go follow people from rankings. Their bets go show here."
               href="/leaderboard"
-              action="See the leaderboard"
+              action="See top predictors"
             />
           )}
         </div>

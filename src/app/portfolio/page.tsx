@@ -1,39 +1,39 @@
 import Link from "next/link";
 import { ResetButton } from "@/components/widgets";
-import { DemoTag, EmptyState, Eyebrow, StatusTag, cn } from "@/components/ui";
-import { getData, type Position } from "@/lib/data";
-import { formatAccuracy, formatChance, formatCents, formatNgn, formatReturn, formatSignedNgn, formatDate } from "@/lib/format";
+import { DemoTag, EmptyState, StatusTag, cn } from "@/components/ui";
+import { getData } from "@/lib/data";
+import { formatAccuracy, formatChance, formatNgn, formatReturn, formatSignedNgn, formatDate } from "@/lib/format";
 
-export const metadata = { title: "Portfolio" };
+export const metadata = { title: "My Bets" };
 
 export default async function PortfolioPage() {
-  const data = await getData();
+  const data = getData();
   const you = data.you;
-  const mine = data.positions.filter((p) => p.trader.id === you.id);
+  const mine = data.positions.filter((p: any) => p.trader.id === you.id);
   const open = mine.filter((p) => p.status === "open");
   const settled = mine.filter((p) => p.status !== "open");
 
   return (
     <div className="space-y-10">
-      <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-6xl">Portfolio</h1>
+      <h1 className="text-4xl font-bold tracking-[-0.04em] md:text-6xl">💰 My Bets</h1>
       <section className="glow rounded-[28px] border border-line p-6 md:p-10">
         <div className="flex flex-wrap items-center gap-3">
-          <DemoTag>Simulated balance</DemoTag>
-          <span className="text-sm text-muted">No real money. Results are demo results.</span>
+          <DemoTag>Demo money only</DemoTag>
+          <span className="text-sm text-muted">No real cash. Just play.</span>
         </div>
-        <p className="mt-6 text-sm font-medium text-muted">Demo balance</p>
-        <p className="num mt-1 text-5xl font-semibold tracking-[-0.04em] md:text-7xl">{formatNgn(you.balance)}</p>
+        <p className="mt-6 text-sm font-medium text-muted">Your demo balance</p>
+        <p className="num mt-1 text-5xl font-bold tracking-[-0.04em] md:text-7xl">{formatNgn(you.balance)}</p>
         <p className="mt-3 text-sm text-muted">
-          Started the demo with {formatNgn(you.openingBalance)}.
+          You start with {formatNgn(you.openingBalance)}.
         </p>
 
         <div className="mt-8 grid grid-cols-3 gap-3 md:gap-4">
-          <Stat label="Open" value={String(open.length)} hint={`${formatNgn(you.openStake)} at stake`} />
-          <Stat label="Settled" value={String(settled.length)} hint={`${formatAccuracy(you.accuracy)} right`} />
+          <Stat label="Still running" value={String(open.length)} hint={`${formatNgn(you.openStake)} put down`} />
+          <Stat label="Don end" value={String(settled.length)} hint={`${formatAccuracy(you.accuracy)} correct`} />
           <Stat
-            label="Return"
+            label="Profit/Loss"
             value={formatReturn(you.returnRatio)}
-            hint={you.settled ? `${formatSignedNgn(you.profit)} on settled` : "No settled positions"}
+            hint={you.settled ? `${formatSignedNgn(you.profit)} total` : "No bets don end yet"}
             tone={you.profit > 0 ? "yes" : you.profit < 0 ? "no" : undefined}
           />
         </div>
@@ -41,20 +41,20 @@ export default async function PortfolioPage() {
 
       <section aria-labelledby="open-heading">
         <div className="flex items-end justify-between">
-          <h2 id="open-heading" className="text-2xl font-semibold tracking-[-0.02em]">
-            Open positions
+          <h2 id="open-heading" className="text-2xl font-bold tracking-[-0.02em]">
+            🎯 Bets still running
           </h2>
           <span className="num text-sm text-muted">{open.length}</span>
         </div>
         <div className="mt-5 space-y-3">
           {open.length ? (
-            open.map((p) => <PositionRow key={p.id} position={p} />)
+            open.map((p: any) => <PositionRow key={p.id} position={p} />)
           ) : (
             <EmptyState
-              title="No open positions"
-              body="Pick a market and take a side. Your position shows here until the market settles."
+              title="You never put any bet"
+              body="Go look markets, pick one, put your demo money."
               href="/markets"
-              action="Explore markets"
+              action="See markets"
             />
           )}
         </div>
@@ -62,23 +62,23 @@ export default async function PortfolioPage() {
 
       <section aria-labelledby="settled-heading">
         <div className="flex items-end justify-between">
-          <h2 id="settled-heading" className="text-2xl font-semibold tracking-[-0.02em]">
-            Settled
+          <h2 id="settled-heading" className="text-2xl font-bold tracking-[-0.02em]">
+            ✅ Bets wey don end
           </h2>
           <span className="num text-sm text-muted">{settled.length}</span>
         </div>
         <div className="mt-5 space-y-3">
           {settled.length ? (
-            settled.map((p) => <PositionRow key={p.id} position={p} />)
+            settled.map((p: any) => <PositionRow key={p.id} position={p} />)
           ) : (
-            <p className="text-sm text-muted">Settled positions appear here with their demo result.</p>
+            <p className="text-sm text-muted">When your bets end, result go show here.</p>
           )}
         </div>
       </section>
 
       <div className="border-t border-line pt-6">
-        <Eyebrow>Demo controls</Eyebrow>
-        <p className="mt-2 text-sm text-muted">Put the demo back to its starting balances and positions.</p>
+        <p className="text-sm font-semibold">Reset demo</p>
+        <p className="mt-1 text-sm text-muted">If you want start everything from scratch, click here. All your bets go vanish.</p>
         <div className="mt-3">
           <ResetButton />
         </div>
@@ -103,7 +103,7 @@ function Stat({
       <p className="text-xs font-medium text-muted">{label}</p>
       <p
         className={cn(
-          "num mt-2 text-2xl font-semibold tracking-[-0.02em] md:text-3xl",
+          "num mt-2 text-2xl font-bold tracking-[-0.02em] md:text-3xl",
           tone === "yes" && "text-yes",
           tone === "no" && "text-no",
         )}
@@ -115,30 +115,30 @@ function Stat({
   );
 }
 
-function PositionRow({ position }: { position: Position }) {
+function PositionRow({ position }: { position: any }) {
   const settled = position.status !== "open";
+  const pct = Math.round(position.priceBps / 100);
   return (
     <Link
       href={`/markets/${position.marketId}`}
-      className="flex flex-col gap-3 rounded-3xl border border-line bg-panel p-5 transition hover:border-line-2 sm:flex-row sm:items-center sm:justify-between"
+      className="flex flex-col gap-3 rounded-3xl border border-line bg-panel p-5 transition hover:border-brand/40 sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="min-w-0">
         <p className="font-semibold leading-snug">{position.question}</p>
         <p className="num mt-1 text-sm text-muted">
-          {position.outcomeLabel} at {formatCents(position.priceBps)} · {formatNgn(position.stake)} staked ·{" "}
-          {formatDate(position.createdAt)}
+          You pick <strong>{position.outcomeLabel}</strong> ({pct}%) · Put {formatNgn(position.stake)} · {formatDate(position.createdAt)}
         </p>
       </div>
       <div className="flex items-center justify-between gap-4 sm:justify-end sm:text-right">
         <StatusTag status={position.status} />
-        <div className="num text-sm">
+        <div className="num text-sm min-w-[100px]">
           {settled ? (
-            <span className={cn("font-semibold", position.status === "won" ? "text-yes" : "text-no")}>
-              {position.status === "won" ? `+${formatNgn((position.payout ?? 0) - position.stake)}` : formatSignedNgn(-position.stake)}
+            <span className={cn("font-bold", position.status === "won" ? "text-yes" : "text-no")}>
+              {position.status === "won" ? `+${formatNgn((position.payout ?? 0) - position.stake)} profit` : `-${formatNgn(position.stake)}`}
             </span>
           ) : (
             <span className="text-muted">
-              Returns {formatNgn(position.potential)} if right · {formatChance(position.priceBps)}
+              Win → {formatNgn(position.potential)} back
             </span>
           )}
         </div>

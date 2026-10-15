@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { MarketCard } from "@/components/cards";
 import { Segmented, cn } from "@/components/ui";
-import { followedInMarket, getData } from "@/lib/data";
-import { CATEGORIES, categoryLabel, formatCompactNgn } from "@/lib/format";
+import { CATEGORIES, followedInMarket, getData } from "@/lib/data";
+import { categoryLabel, formatCompactNgn } from "@/lib/format";
 
-export const metadata = { title: "Markets" };
+export const metadata = { title: "All Markets" };
 
 export default async function MarketsPage({
   searchParams,
@@ -12,7 +12,7 @@ export default async function MarketsPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const data = await getData();
+  const data = getData();
   const active = CATEGORIES.some((c) => c.id === category) ? category : undefined;
   const inView = (m: { category: string }) => !active || m.category === active;
 
@@ -26,18 +26,18 @@ export default async function MarketsPage({
     <div className="space-y-10">
       <section className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] md:text-6xl">Markets</h1>
+          <h1 className="text-4xl font-bold tracking-[-0.04em] md:text-6xl">All Markets</h1>
           <p className="mt-3 max-w-xl text-muted md:text-lg">
-            Real-world questions with a price on each answer. The price is the chance the crowd gives it.
+            All the things you fit predict. Pick one, put your demo money, see if you sabi.
           </p>
           <p className="num mt-3 text-sm text-faint">
-            {open.length} open · {formatCompactNgn(volume)} demo volume
+            {open.length} still open · {formatCompactNgn(volume)} total demo money
           </p>
         </div>
         <Segmented
           items={[
             { href: "/markets", label: "Markets", active: true },
-            { href: "/feed", label: "Feed", active: false },
+            { href: "/feed", label: "Activity", active: false },
           ]}
         />
       </section>
@@ -48,7 +48,7 @@ export default async function MarketsPage({
           return (
             <Link
               key={c.id}
-              href={c.id === "all" ? "/markets" : `/markets?category=${c.id}`}
+              href={c.id === "all" ? "/markets" : `/markets?category=${encodeURIComponent(c.id)}`}
               aria-current={on ? "page" : undefined}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition",
@@ -65,20 +65,20 @@ export default async function MarketsPage({
         {open.length ? (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {open.map((market) => (
-              <MarketCard key={market.id} market={market} followed={followedInMarket(data, market)} />
+              <MarketCard key={market.id} market={market} followed={followedInMarket(market)} />
             ))}
           </div>
         ) : (
           <div className="rounded-3xl border border-dashed border-line-2 p-10 text-center text-muted">
-            No open {active ? categoryLabel(active).toLowerCase() : ""} markets right now.
+            No {active ? categoryLabel(active) : ""} market open right now. Check back later.
           </div>
         )}
       </section>
 
       {settled.length ? (
         <section>
-          <h2 className="text-xl font-semibold tracking-[-0.01em]">Settled</h2>
-          <p className="mt-1 text-sm text-muted">Results are demo settlements, not official outcomes.</p>
+          <h2 className="text-xl font-bold tracking-[-0.01em]">Don end (Results out)</h2>
+          <p className="mt-1 text-sm text-muted">These ones don finish. Na demo results, just for practice.</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {settled.map((market) => (
               <MarketCard key={market.id} market={market} />
