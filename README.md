@@ -1,6 +1,6 @@
 # Sabi - Nigerian Student Prediction App (Prototype)
 
-Simple prediction market app made for Nigerian youths and university students. Practice predicting things with **demo money only** — no real money, no risk, just vibes.
+Simple prediction market app made for Nigerian youths and university students. Practice predicting things with **demo money only** — no real money, no risk, just practice.
 
 ## Topics you can predict on
 - ⚽ Sports (Super Eagles, Arsenal, NPFL)
@@ -9,9 +9,9 @@ Simple prediction market app made for Nigerian youths and university students. P
 - 🎓 Campus life (ASUU strike)
 - 📱 Tech (iPhone prices, new gadgets)
 
-## How to run (simple as ABC)
+## How to run
 
-No database needed! No environment variables! No setup stress.
+No database or environment variables are required.
 
 ```bash
 npm install
@@ -27,10 +27,10 @@ That's it. Everything is stored in memory while the server runs. Restart = back 
 - See clear percentages (e.g., "58% chance - Likely")
 - See exactly what you win before placing bet
 - Follow "sharp" predictors
-- Leaderboard showing who sabi predict
+- Leaderboard showing who predicts well
 - Reset everything anytime with reset button
 - Mobile friendly bottom navigation
-- Simple Pidgin/Nigerian English all through
+- Clear, standard English throughout
 
 ## Tech
 - Next.js 16

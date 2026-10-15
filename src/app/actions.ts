@@ -27,12 +27,12 @@ export async function placePositionAction(input: {
   thesis?: string;
 }): Promise<ActionResult> {
   const stake = parseNgnInput(input.stakeRaw);
-  if (stake === null) return { ok: false, error: "Type a correct amount (numbers only, no commas)." };
-  if (stake < MIN_POSITION_NGN) return { ok: false, error: `Smallest bet na ₦${MIN_POSITION_NGN.toLocaleString("en-NG")}.` };
-  if (stake > MAX_POSITION_NGN) return { ok: false, error: `Biggest bet na ₦${MAX_POSITION_NGN.toLocaleString("en-NG")}.` };
+  if (stake === null) return { ok: false, error: "Enter a valid amount using numbers only, without commas." };
+  if (stake < MIN_POSITION_NGN) return { ok: false, error: `Minimum bet is ₦${MIN_POSITION_NGN.toLocaleString("en-NG")}.` };
+  if (stake > MAX_POSITION_NGN) return { ok: false, error: `Maximum bet is ₦${MAX_POSITION_NGN.toLocaleString("en-NG")}.` };
 
   const thesis = (input.thesis ?? "").trim();
-  if (thesis.length > MAX_NOTE_LENGTH) return { ok: false, error: `Your reason too long. Use less than ${MAX_NOTE_LENGTH} letters.` };
+  if (thesis.length > MAX_NOTE_LENGTH) return { ok: false, error: `Your reason is too long. Use fewer than ${MAX_NOTE_LENGTH} letters.` };
 
   const result = placePosition(input.marketId, input.outcomeId, stake, thesis);
   refresh();
@@ -53,8 +53,8 @@ export async function toggleFollowAction(handle: string): Promise<ActionResult> 
 
 export async function postCommentAction(input: { marketId: string; body: string }): Promise<ActionResult> {
   const body = input.body.trim();
-  if (body.length < 2) return { ok: false, error: "Write something small first." };
-  if (body.length > MAX_COMMENT_LENGTH) return { ok: false, error: `Comment too long. Keep am under ${MAX_COMMENT_LENGTH} letters.` };
+  if (body.length < 2) return { ok: false, error: "Please write a comment first." };
+  if (body.length > MAX_COMMENT_LENGTH) return { ok: false, error: `Comment is too long. Keep it under ${MAX_COMMENT_LENGTH} letters.` };
 
   const result = postComment(input.marketId, body);
   refresh();

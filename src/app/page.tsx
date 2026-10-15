@@ -19,23 +19,23 @@ export default async function Home() {
           <div>
             <DemoTag>🎮 Demo only · No real money</DemoTag>
             <h1 className="mt-6 text-[2.25rem] font-bold leading-[1.05] tracking-[-0.03em] md:text-[4rem]">
-              Predict things.<br />Win demo money.<br />Follow sharp guys.
+              Make predictions.<br />Earn demo rewards.<br />Follow top predictors.
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-muted md:text-lg">
-              Sabi na app for Nigerian students wey like predict things. Bet on Super Eagles, BBNaija, fuel price, ASUU strike, CBN decisions — with <strong>fake money</strong>. No risk, just vibes and practice.
+              Sabi is a prediction app for Nigerian students. Make predictions about the Super Eagles, BBNaija, fuel prices, ASUU strikes and CBN decisions using <strong>demo money only</strong>. There is no financial risk—just practice.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/markets" className={btnPrimary}>
                 See all markets →
               </Link>
               <Link href="/leaderboard" className={btnGhost}>
-                Who dey win?
+                View the rankings
               </Link>
             </div>
             <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted">
               <span>✅ No signup</span>
               <span>✅ No real money</span>
-              <span>✅ Just run am with npm</span>
+              <span>✅ Runs with npm</span>
             </div>
           </div>
 
@@ -48,7 +48,7 @@ export default async function Home() {
               <p className="mt-3 text-xl font-bold leading-snug group-hover:text-brand">{lead.question}</p>
               <p className="mt-2 text-sm text-muted">{lead.simpleExplain}</p>
               <p className="mt-4 text-xs text-muted">
-                {lead.traderCount} people don bet · {lead.outcomes.length > 0 ? `${Math.round(lead.outcomes[0].priceBps / 100)}% think ${lead.outcomes[0].label}` : ''}
+                {lead.traderCount} people have predicted · {lead.outcomes.length > 0 ? `${Math.round(lead.outcomes[0].priceBps / 100)}% think ${lead.outcomes[0].label}` : ''}
               </p>
             </Link>
           ) : null}
@@ -66,7 +66,7 @@ export default async function Home() {
             See all →
           </Link>
         </div>
-        <p className="mt-1 text-sm text-muted">Things people dey bet on for now.</p>
+        <p className="mt-1 text-sm text-muted">Popular predictions right now.</p>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {markets.map((market: any) => (
             <MarketCard key={market.id} market={market} followed={followedInMarket(market)} />
@@ -83,7 +83,7 @@ export default async function Home() {
               See all →
             </Link>
           </div>
-          <p className="mt-1 text-sm text-muted">See wetin people dey put their money on.</p>
+          <p className="mt-1 text-sm text-muted">See what other people are predicting.</p>
           <div className="mt-6 space-y-4">
             {latest.map((position) => (
               <PositionItem
@@ -104,7 +104,7 @@ export default async function Home() {
               Leaderboard →
             </Link>
           </div>
-          <p className="mt-1 text-sm text-muted">People wey sabi predict well well.</p>
+          <p className="mt-1 text-sm text-muted">Predictors with the strongest records.</p>
           <div className="mt-6 space-y-3">
             {top.map((trader, index) => (
               <TraderRow
@@ -118,7 +118,7 @@ export default async function Home() {
             ))}
           </div>
           <p className="mt-4 text-xs leading-5 text-faint">
-            Na demo ranking. Results no real, just practice.
+            These are demo rankings. Results are for practice only.
           </p>
         </section>
       </div>

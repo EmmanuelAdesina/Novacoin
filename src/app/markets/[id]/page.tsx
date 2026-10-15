@@ -55,7 +55,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
             <div className="flex items-center justify-between text-xs text-muted">
               <span className="font-semibold">What people think (current odds)</span>
               <span className="num">
-                {market.traderCount} {market.traderCount === 1 ? "person" : "people"} don bet · {formatCompactNgn(market.volume)} total
+                {market.traderCount} {market.traderCount === 1 ? "person" : "people"} placed a prediction · {formatCompactNgn(market.volume)} total
               </span>
             </div>
             <div className="mt-4">
@@ -74,7 +74,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
               )}
             </div>
             <p className="mt-4 text-xs text-muted">
-              💡 Remember: High percentage no mean e must happen. E just mean many people believe am.
+              💡 Remember: A high percentage does not mean an outcome is certain. It only shows what many people expect.
             </p>
           </section>
 
@@ -97,7 +97,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
         {/* SIDE BAR */}
         <aside className="space-y-6">
           <section className="rounded-3xl border border-line bg-panel p-5 md:p-6">
-            <Eyebrow>How we take decide winner?</Eyebrow>
+            <Eyebrow>How do we decide the winner?</Eyebrow>
             <p className="mt-3 text-sm leading-6">{market.howWeDecide}</p>
             <p className="mt-3 text-xs text-faint">
               Closes: {formatDate(market.closesAt)} · Result around: {formatDate(market.resolvesAt)}
@@ -106,7 +106,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
 
           <section className="rounded-3xl border border-line bg-panel p-5 md:p-6">
             <div className="flex items-center justify-between">
-              <Eyebrow>People wey don bet</Eyebrow>
+              <Eyebrow>People who made predictions</Eyebrow>
               <span className="num text-xs text-muted">{market.positions.length}</span>
             </div>
             {sortedPositions.length ? (
@@ -133,7 +133,7 @@ export default async function MarketPage({ params }: { params: Promise<{ id: str
                 })}
               </ul>
             ) : (
-              <p className="mt-4 text-sm text-muted">Nobody don bet here yet. Be first!</p>
+              <p className="mt-4 text-sm text-muted">Nobody placed a prediction here yet. Be first!</p>
             )}
           </section>
 

@@ -57,14 +57,14 @@ export function ProfileView({ trader }: { trader: Trader & { wins?: number; sett
       <section aria-labelledby="record-heading">
         <div className="flex items-end justify-between">
           <h2 id="record-heading" className="text-2xl font-bold tracking-[-0.02em]">
-            📊 Person track record
+            📊 Prediction track record
           </h2>
         </div>
         <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          <Stat label="Profit %" value={formatReturn(trader.returnRatio ?? null)} tone={(trader.profit ?? 0) > 0 ? "yes" : (trader.profit ?? 0) < 0 ? "no" : undefined} hint={settled ? `${formatSignedNgn(trader.profit ?? 0)} total` : "No bets don end"} />
+          <Stat label="Profit %" value={formatReturn(trader.returnRatio ?? null)} tone={(trader.profit ?? 0) > 0 ? "yes" : (trader.profit ?? 0) < 0 ? "no" : undefined} hint={settled ? `${formatSignedNgn(trader.profit ?? 0)} total` : "No bets have been settled"} />
           <Stat label="How correct" value={formatAccuracy(trader.accuracy ?? null)} hint={`${wins} won · ${losses} lost`} />
-          <Stat label="Bets done" value={String(settled)} hint="We get result" />
-          <Stat label="Still running" value={String(trader.openCount ?? 0)} hint={`${formatNgn(trader.openStake ?? 0)} put down`} />
+          <Stat label="Predictions settled" value={String(settled)} hint="Results available" />
+          <Stat label="Still running" value={String(trader.openCount ?? 0)} hint={`${formatNgn(trader.openStake ?? 0)} committed`} />
         </div>
         {settled ? (
           <div className="mt-4 rounded-3xl border border-line bg-panel p-5">
@@ -76,7 +76,7 @@ export function ProfileView({ trader }: { trader: Trader & { wins?: number; sett
               <div className="h-full bg-yes" style={{ width: `${(wins / settled) * 100}%` }} />
               <div className="h-full bg-no" style={{ width: `${(losses / settled) * 100}%` }} />
             </div>
-            <p className="mt-3 text-xs text-faint">Na demo stats, not real life.</p>
+            <p className="mt-3 text-xs text-faint">Demo statistics only.</p>
           </div>
         ) : null}
       </section>
@@ -95,17 +95,17 @@ export function ProfileView({ trader }: { trader: Trader & { wins?: number; sett
                 />
               ))
             ) : (
-              <EmptyState title="No bets yet" body="This person never put any bet." />
+              <EmptyState title="No predictions yet" body="This person has not made any predictions." />
             )}
           </div>
         </section>
 
         <div className="space-y-10">
-          <PeopleList title="People them follow" people={following} youFollow={youFollow} empty="Them never follow anybody." />
-          <PeopleList title="People wey follow them" people={followers} youFollow={youFollow} empty="Nobody follow them yet." />
+          <PeopleList title="Following" people={following} youFollow={youFollow} empty="Not following anyone yet." />
+          <PeopleList title="Followers" people={followers} youFollow={youFollow} empty="No followers yet." />
         </div>
       </div>
-      {isYou ? <p className="text-xs text-faint">🎮 Na demo profile. Everything fake, just play.</p> : null}
+      {isYou ? <p className="text-xs text-faint">🎮 Demo profile. All data is for practice only.</p> : null}
     </div>
   );
 }

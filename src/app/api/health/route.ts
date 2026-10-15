@@ -1,5 +1,5 @@
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  return Response.json({ ok: true, message: "Sabi dey run! No DB needed." });
+  return Response.json({ ok: true, message: "Sabi is running. No database is needed." });
 }

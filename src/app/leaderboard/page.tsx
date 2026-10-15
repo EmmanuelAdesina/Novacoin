@@ -26,7 +26,7 @@ export default async function LeaderboardPage({
           <DemoTag>Demo rankings</DemoTag>
           <h1 className="mt-4 text-4xl font-bold tracking-[-0.04em] md:text-6xl">🏆 Rankings</h1>
           <p className="mt-3 max-w-xl text-muted md:text-lg">
-            See people wey sabi predict well. Follow them make you see their next bets.
+            See who has a strong prediction record. Follow them to see their next predictions.
           </p>
         </div>
         <div className="inline-flex rounded-full border border-line bg-panel p-1 text-sm font-medium" role="tablist" aria-label="Sort by">
@@ -53,13 +53,13 @@ export default async function LeaderboardPage({
 
       <section className="grid gap-3 rounded-3xl border border-line bg-panel p-5 text-sm leading-6 text-muted md:grid-cols-3 md:p-6">
         <p>
-          <span className="font-semibold text-ink">Profit %</span> = how much person gain divide by how much them put.
+          <span className="font-semibold text-ink">Profit %</span> = how much a person gained compared with the amount they put in.
         </p>
         <p>
-          <span className="font-semibold text-ink">How correct</span> = how many bets them win out of all their bets.
+          <span className="font-semibold text-ink">How correct</span> = the number of bets they won divided by their total settled bets.
         </p>
         <p>
-          You need at least {RANK_MIN_SETTLED} settled bets before you rank. Everything na demo.
+          You need at least {RANK_MIN_SETTLED} settled bets before you rank. These are demo results only.
         </p>
       </section>
 
@@ -85,7 +85,7 @@ export default async function LeaderboardPage({
 
       {unranked.length ? (
         <section aria-label="Not ranked yet">
-          <Eyebrow>New people (never rank)</Eyebrow>
+          <Eyebrow>New predictors (not ranked yet)</Eyebrow>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {unranked.map((trader) => (
               <div key={trader.id} className="rounded-3xl border border-line bg-panel px-5 py-4">

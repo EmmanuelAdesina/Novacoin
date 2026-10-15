@@ -38,7 +38,7 @@ export function DemoTag({ children = "Demo" }: { children?: ReactNode }) {
 export function StatusTag({ status }: { status: "open" | "closed" | "settled" | "won" | "lost" }) {
   const map = {
     open: { label: "Still open", cls: "bg-yes/12 text-yes" },
-    closed: { label: "Don close", cls: "bg-line text-muted" },
+    closed: { label: "Closed", cls: "bg-line text-muted" },
     settled: { label: "Result out", cls: "bg-line text-ink" },
     won: { label: "You win! 🎉", cls: "bg-yes/15 text-yes" },
     lost: { label: "You lose", cls: "bg-no/15 text-no" },
@@ -166,12 +166,12 @@ export function Segmented({
 export function HowItWorksBox() {
   return (
     <div className="rounded-2xl bg-brand/8 border border-brand/20 px-5 py-4">
-      <p className="text-sm font-semibold text-brand">How this thing work?</p>
+      <p className="text-sm font-semibold text-brand">How does it work?</p>
       <ol className="mt-2 space-y-1 text-sm text-muted leading-6">
-        <li>1. The percentage shows what people think go happen.</li>
-        <li>2. If something get 60%, that means most people think am go happen.</li>
-        <li>3. Put your demo money on wetin you believe. If you right, you win more money.</li>
-        <li>4. <strong>NO REAL MONEY.</strong> Na just practice for students.</li>
+        <li>1. The percentage shows what people think will happen.</li>
+        <li>2. If an option has 60%, most people think it is likely to happen.</li>
+        <li>3. Choose what you believe will happen and place a demo prediction. If you are right, your demo balance increases.</li>
+        <li>4. <strong>NO REAL MONEY.</strong> This is practice only.</li>
       </ol>
     </div>
   );

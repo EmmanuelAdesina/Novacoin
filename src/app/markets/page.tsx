@@ -28,7 +28,7 @@ export default async function MarketsPage({
         <div>
           <h1 className="text-4xl font-bold tracking-[-0.04em] md:text-6xl">All Markets</h1>
           <p className="mt-3 max-w-xl text-muted md:text-lg">
-            All the things you fit predict. Pick one, put your demo money, see if you sabi.
+            Explore predictions on current events. Choose an option and use your demo balance to make a prediction.
           </p>
           <p className="num mt-3 text-sm text-faint">
             {open.length} still open · {formatCompactNgn(volume)} total demo money
@@ -77,8 +77,8 @@ export default async function MarketsPage({
 
       {settled.length ? (
         <section>
-          <h2 className="text-xl font-bold tracking-[-0.01em]">Don end (Results out)</h2>
-          <p className="mt-1 text-sm text-muted">These ones don finish. Na demo results, just for practice.</p>
+          <h2 className="text-xl font-bold tracking-[-0.01em]">Ended (results available)</h2>
+          <p className="mt-1 text-sm text-muted">These markets have ended. Results are for practice only.</p>
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {settled.map((market) => (
               <MarketCard key={market.id} market={market} />

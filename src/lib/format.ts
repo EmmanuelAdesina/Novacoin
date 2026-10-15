@@ -1,6 +1,6 @@
 // Simple formatting helpers - no jargon
 
-export const DEMO_NOTE = "Na demo this. No real money dey inside. All results na just practice.";
+export const DEMO_NOTE = "Demo only. No real money is involved. All results are for practice.";
 
 export function categoryLabel(id: string) {
   return id;
